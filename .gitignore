@@ -1,0 +1,10 @@
+#folder
+.idea/*
+out/*
+*.iml
+*.class
+logs/*
+.mvn/*
+mvnw
+*cmd
+target/*
