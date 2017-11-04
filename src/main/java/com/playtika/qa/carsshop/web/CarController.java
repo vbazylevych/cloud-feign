@@ -1,10 +1,10 @@
 package com.playtika.qa.carsshop.web;
 
 import com.playtika.qa.carsshop.domain.Car;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,39 +16,38 @@ import java.util.Map;
 
 import static org.springframework.http.HttpStatus.*;
 
+@Slf4j
 @Controller
 public class CarController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CarController.class);
     private Map<Integer, Car> storedCars = new HashMap<>();
     private int id = 1;
     private HttpHeaders responseHeaders = new HttpHeaders();
 
-
+    @SneakyThrows
     @GetMapping(value = "/getcar")
-    public ResponseEntity getSpecificCar(@RequestParam("id") int id) throws JSONException {
-
+    public ResponseEntity getSpecificCar(@RequestParam("id") int id) {
+        setDefaultResponseHeader();
         try {
             Car wantedCar = storedCars.get(id);
-            LOG.debug("Car with id {} was founded", id);
+            log.debug("Car with id {} was founded", id);
+
             JSONObject response = new JSONObject();
             response.put("price", wantedCar.getPrice());
-            LOG.debug("Get price for {} car", id);
+            log.debug("Get price for {} car", id);
             response.put("contact", wantedCar.getContactDetails());
-            LOG.debug("Get contact for {} car", id);
-            setDefaultResponseHeader();
-            LOG.info("Car with id {} was successfully founded", id);
+            log.debug("Get contact for {} car", id);
+            log.info("Car with id {} was successfully founded", id);
             return new ResponseEntity<>(response.toString(), responseHeaders, CREATED);
         } catch (Exception e) {
-            LOG.error("Cant get cap with id {}", id);
-            setDefaultResponseHeader();
+            log.error("Cant get cap with id {}", id);
             return new ResponseEntity<>("{}", responseHeaders, NOT_FOUND);
         }
     }
 
     @GetMapping("/getcars")
     public ResponseEntity getStoredCars() {
-        LOG.info("List of cars will be returned");
+        log.info("List of cars will be returned");
         return new ResponseEntity(storedCars, OK);
     }
 
@@ -57,24 +56,23 @@ public class CarController {
                                          @RequestParam("contact") String contactDetails,
                                          @RequestBody Map<String, String> json) throws JSONException {
         Car newCar = new Car(price, contactDetails, json);
-        LOG.debug("New Car with parameters {} was created", newCar.toString());
+        log.debug("New Car with parameters {} was created", newCar.toString());
 
         storedCars.put(id, newCar);
-        LOG.info("Car with id {} was successfully created", id);
+        log.info("Car with id {} was successfully created", id);
 
         JSONObject response = new JSONObject();
         response.put("carId", id);
         id = ++id;
-        LOG.debug("Response {} was send to client", response.toString());
+        log.debug("Response {} was send to client", response.toString());
         setDefaultResponseHeader();
         return new ResponseEntity(response.toString(), responseHeaders, CREATED);
-
     }
 
     @DeleteMapping("/delcar/{id}")
     public ResponseEntity getStoredCars(@PathVariable("id") int carId) {
         storedCars.remove(carId);
-        LOG.info("Car {} was deleted", carId);
+        log.info("Car {} was deleted", carId);
         return new ResponseEntity("Successfully deleted", OK);
     }
 
