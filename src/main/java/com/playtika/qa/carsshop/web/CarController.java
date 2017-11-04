@@ -6,22 +6,23 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.HashMap;
 import java.util.Map;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Controller
 public class CarController {
 
     private static final Logger LOG = LoggerFactory.getLogger(CarController.class);
-    private List<Car> storedCars = new ArrayList<>();
+    private Map<Integer, Car> storedCars = new HashMap<>();
+    private int id = 1;
     private HttpHeaders responseHeaders = new HttpHeaders();
-
 
 
     @GetMapping(value = "/getcar")
@@ -35,20 +36,20 @@ public class CarController {
             LOG.debug("Get price for {} car", id);
             response.put("contact", wantedCar.getContactDetails());
             LOG.debug("Get contact for {} car", id);
-            setDefoultResponseHeader();
-            LOG.info("Car with id {} was succesfully founded", id);
-            return new ResponseEntity<>(response.toString(), responseHeaders, HttpStatus.CREATED);
+            setDefaultResponseHeader();
+            LOG.info("Car with id {} was successfully founded", id);
+            return new ResponseEntity<>(response.toString(), responseHeaders, CREATED);
         } catch (Exception e) {
             LOG.error("Cant get cap with id {}", id);
-            setDefoultResponseHeader();
-            return new ResponseEntity<>("{}", responseHeaders, HttpStatus.NOT_FOUND);
+            setDefaultResponseHeader();
+            return new ResponseEntity<>("{}", responseHeaders, NOT_FOUND);
         }
     }
 
     @GetMapping("/getcars")
     public ResponseEntity getStoredCars() {
         LOG.info("List of cars will be returned");
-        return new ResponseEntity(storedCars, HttpStatus.OK);
+        return new ResponseEntity(storedCars, OK);
     }
 
     @PostMapping(value = "/addcar")
@@ -58,19 +59,26 @@ public class CarController {
         Car newCar = new Car(price, contactDetails, json);
         LOG.debug("New Car with parameters {} was created", newCar.toString());
 
-        storedCars.add(newCar);
-        int carId = storedCars.indexOf(newCar);
-        LOG.debug("New Car with parameters {} was stored", newCar.toString());
-        LOG.info("Car with id {} was succesfully created", carId);
+        storedCars.put(id, newCar);
+        LOG.info("Car with id {} was successfully created", id);
 
         JSONObject response = new JSONObject();
-        response.put("carId", carId);
+        response.put("carId", id);
+        id = ++id;
         LOG.debug("Response {} was send to client", response.toString());
-        setDefoultResponseHeader();
-        return new ResponseEntity(response.toString(), responseHeaders, HttpStatus.OK);
+        setDefaultResponseHeader();
+        return new ResponseEntity(response.toString(), responseHeaders, CREATED);
 
     }
-    private void setDefoultResponseHeader() {
+
+    @DeleteMapping("/delcar/{id}")
+    public ResponseEntity getStoredCars(@PathVariable("id") int carId) {
+        storedCars.remove(carId);
+        LOG.info("Car {} was deleted", carId);
+        return new ResponseEntity("Successfully deleted", OK);
+    }
+
+    private void setDefaultResponseHeader() {
         responseHeaders.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
     }
 }
