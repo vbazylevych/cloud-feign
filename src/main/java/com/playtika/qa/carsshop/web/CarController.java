@@ -30,7 +30,7 @@ public class CarController {
         setDefaultResponseHeader();
         try {
             Car wantedCar = storedCars.get(id);
-            log.debug("Car with id {} was founded", id);
+            log.debug("Car with id {} was found", id);
 
             JSONObject response = new JSONObject();
             response.put("price", wantedCar.getPrice());
@@ -40,7 +40,7 @@ public class CarController {
             log.info("Car with id {} was successfully founded", id);
             return new ResponseEntity<>(response.toString(), responseHeaders, CREATED);
         } catch (Exception e) {
-            log.error("Cant get cap with id {}", id);
+            log.error("Cant get car with id {}", id);
             return new ResponseEntity<>("{}", responseHeaders, NOT_FOUND);
         }
     }
