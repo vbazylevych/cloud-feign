@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +20,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
-@RestController("/cars")
+@RestController
 public class CarController {
 
     private Map<AtomicLong, CarInStore> storedCars = new HashMap<>();
     private AtomicLong id = new AtomicLong(0);
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/cars",produces = MediaType.APPLICATION_JSON_VALUE)
     public AtomicLong createCar(@RequestParam("price") int price,
                                 @RequestParam("contact") String contactDetails,
                                 @RequestBody Car car) {
@@ -37,8 +38,8 @@ public class CarController {
     }
 
 
-    @GetMapping("/{wantedId}")
-    public Car getCar(@PathVariable(value="siteId") long wantedId) {
+    @RequestMapping(value = "/cars/{wantedId}" , method = RequestMethod.GET)
+    public Car getCar(@PathVariable(value="wantedId") long wantedId) {
         Car wantedCar = storedCars.get(id).getCar();
         log.info("Car with id {} was successfully founded", wantedId);
         return wantedCar;
