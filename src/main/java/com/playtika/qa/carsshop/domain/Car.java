@@ -6,4 +6,5 @@ import lombok.Data;
 public class Car {
     private int enginePower;
     private String color;
+    private String model;
 }
