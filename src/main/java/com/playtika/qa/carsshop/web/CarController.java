@@ -20,13 +20,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
-@RestController
+@RestController("/cars")
 public class CarController {
 
     private Map<AtomicLong, CarInStore> storedCars = new HashMap<>();
     private AtomicLong id = new AtomicLong(0);
 
-    @PostMapping(value = "/cars",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public AtomicLong createCar(@RequestParam("price") int price,
                                 @RequestParam("contact") String contactDetails,
                                 @RequestBody Car car) {
@@ -38,7 +38,7 @@ public class CarController {
     }
 
 
-    @RequestMapping(value = "/cars/{wantedId}" , method = RequestMethod.GET)
+    @GetMapping(value = "/cars/{wantedId}")
     public Car getCar(@PathVariable(value="wantedId") long wantedId) {
         Car wantedCar = storedCars.get(id).getCar();
         log.info("Car with id {} was successfully founded", wantedId);
