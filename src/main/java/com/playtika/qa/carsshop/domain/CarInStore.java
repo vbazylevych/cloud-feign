@@ -2,6 +2,8 @@ package com.playtika.qa.carsshop.domain;
 
 import lombok.Data;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 @Data
 public class CarInStore {
     private Car car;
