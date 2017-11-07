@@ -71,9 +71,12 @@ public class CarController {
 
     @DeleteMapping("/delcar/{id}")
     public ResponseEntity getStoredCars(@PathVariable("id") int carId) {
-        storedCars.remove(carId);
-        log.info("Car {} was deleted", carId);
-        return new ResponseEntity("Successfully deleted", OK);
+        if (storedCars.remove(carId) != null) {
+            log.info("Car {} was deleted", carId);
+            return new ResponseEntity("Successfully deleted", OK);
+        } else {
+            return new ResponseEntity("No such car", NOT_FOUND);
+        }
     }
 
     private void setDefaultResponseHeader() {
