@@ -16,13 +16,13 @@ import java.util.concurrent.atomic.AtomicLong;
 @RestController
 public class CarController {
 
-    private Map<Long, CarInStore> storedCars = new HashMap<>();
-    private AtomicLong id = new AtomicLong(0);
+    private final Map<Long, CarInStore> storedCars = new HashMap<>();
+    private final AtomicLong id = new AtomicLong(0);
 
     @PostMapping(value = "/cars", produces = MediaType.APPLICATION_JSON_VALUE)
     public AtomicLong createCar(@RequestParam("price") int price,
-                          @RequestParam("contact") String contactDetails,
-                          @RequestBody Car car) {
+                                @RequestParam("contact") String contactDetails,
+                                @RequestBody Car car) {
 
         CarInStore carInStore = new CarInStore(car, price, contactDetails);
         storedCars.put(id.addAndGet(1), carInStore);
@@ -30,12 +30,16 @@ public class CarController {
         return id;
     }
 
-    @GetMapping(value = "/cars/{wantedId}")
-    public Map<String, Object> getCar(@PathVariable(value = "wantedId") long wantedId) {
+    @GetMapping(value = "/cars/{id}")
+    public Map<String, Object> getCar(@PathVariable(value = "id") long id) {
         Map<String, Object> response = new HashMap<>();
-        response.put("price:", storedCars.get(wantedId).getPrice());
-        response.put("contact:", storedCars.get(wantedId).getContact());
-        log.info("Car with id {} was successfully founded", wantedId);
+        try {
+            response.put("price:", storedCars.get(id).getPrice());
+            response.put("contact:", storedCars.get(id).getContact());
+            log.info("Car with id {} was successfully founded", id);
+        } catch (Exception e) {
+            log.info("Can't find car with id {}", id);
+        }
         return response;
     }
 
@@ -46,8 +50,13 @@ public class CarController {
     }
 
     @DeleteMapping("cars/{id}")
-    public void deleteCars(@PathVariable("id") long carId) {
-        storedCars.remove(carId);
-        log.info("Car {} was deleted", carId);
+    public void deleteCars(@PathVariable("id") long id) {
+
+        if (storedCars.containsKey(id)) {
+            storedCars.remove(id);
+            log.info("Car {} was deleted", id);
+        } else {
+            log.warn("Cant delete car with id {}", id);
+        }
     }
 }
