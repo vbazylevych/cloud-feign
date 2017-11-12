@@ -3,6 +3,7 @@ package com.playtika.qa.carsshop.service;
 import com.playtika.qa.carsshop.domain.CarInStore;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 @Service
 public class CarServiceImpl implements CarService {
-    private final Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
+    private Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
     private final AtomicLong id = new AtomicLong(0);
 
     @Override
@@ -27,8 +28,8 @@ public class CarServiceImpl implements CarService {
     public Map<String, Object> getCar(long id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            response.put("price:", storedCars.get(id).getPrice());
-            response.put("contact:", storedCars.get(id).getContact());
+            response.put("price", storedCars.get(id).getPrice());
+            response.put("contact", storedCars.get(id).getContact());
             log.info("Car with id {} was successfully founded", id);
         } catch (Exception e) {
             log.info("Can't find car with id {}", id);
@@ -50,5 +51,13 @@ public class CarServiceImpl implements CarService {
         } else {
             log.warn("Cant delete car with id {}", id);
         }
+    }
+
+    public Map<Long, CarInStore> getStoredCars() {
+        return storedCars;
+    }
+
+    public void setStoredCars(Map<Long, CarInStore> storedCars) {
+        this.storedCars = storedCars;
     }
 }

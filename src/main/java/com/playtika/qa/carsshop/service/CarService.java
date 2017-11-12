@@ -14,4 +14,8 @@ public interface CarService {
 
     void deleteCar(long id);
 
+    Map<Long, CarInStore> getStoredCars();
+
+    void setStoredCars(Map<Long, CarInStore> storedCars);
+
 }

@@ -1,10 +1,14 @@
 package com.playtika.qa.carsshop.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Car {
     private int enginePower;
     private String color;
