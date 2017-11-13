@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 @Service
 public class CarServiceImpl implements CarService {
-    private Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
+    private final Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
     private final AtomicLong id = new AtomicLong(0);
 
     @Override
@@ -51,13 +51,5 @@ public class CarServiceImpl implements CarService {
         } else {
             log.warn("Cant delete car with id {}", id);
         }
-    }
-
-    public Map<Long, CarInStore> getStoredCars() {
-        return storedCars;
-    }
-
-    public void setStoredCars(Map<Long, CarInStore> storedCars) {
-        this.storedCars = storedCars;
     }
 }

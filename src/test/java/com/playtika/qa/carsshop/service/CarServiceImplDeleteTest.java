@@ -1,12 +1,13 @@
 package com.playtika.qa.carsshop.service;
 
+import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-import static org.junit.Assert.assertEquals;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
 
 
 public class CarServiceImplDeleteTest {
@@ -19,41 +20,39 @@ public class CarServiceImplDeleteTest {
 
     @Test
     public void deleteWhenRepositoryIsEmpty() {
-
-        Map<String, Object> expectedResponse = new HashMap<>();
-        carService.deleteCar(3L);
-        assertEquals(carService.getStoredCars(), expectedResponse);
+        carService.deleteCar(3);
+        assertTrue(carService.getAllCars().isEmpty());
     }
+
     @Test
     public void deleteWhenRepositoryHasOneItem() {
-        Map<String, Object> expectedResponse = new HashMap<>();
-        Map<Long, CarInStore> repository = new HashMap<>();
-        repository.put(1L, new CarInStore());
-        carService.setStoredCars(repository);
-        carService.deleteCar(1L);
-        assertEquals(carService.getStoredCars(), expectedResponse);
+
+        carService.addCarToStore(new CarInStore(new Car(), 0, ""));
+        carService.deleteCar(1);
+        assertTrue(carService.getAllCars().isEmpty());
     }
 
     @Test
     public void deleteWhenRepositoryHasSeveralItems() {
-        Map<Long, CarInStore> repository = new HashMap<>();
-        repository.put(1L, new CarInStore());
-        repository.put(2L, new CarInStore());
-        carService.setStoredCars(repository);
-        carService.deleteCar(2L);
-        Map<Long, CarInStore> expectedResponse = new HashMap<>();
-        expectedResponse.put(1L, new CarInStore());
-        assertEquals(carService.getStoredCars(), expectedResponse);
+        CarInStore first = new CarInStore(new Car(), 0, "");
+        CarInStore second = new CarInStore(new Car(), 0, "");
+        CarInStore third = new CarInStore(new Car(), 0, "");
+        carService.addCarToStore(first);
+        carService.addCarToStore(second);
+        carService.addCarToStore(third);
+        carService.deleteCar(2);
+        assertTrue(carService.getAllCars().contains(first));
+        assertTrue(carService.getAllCars().contains(third));
+        assertFalse(carService.getAllCars().contains(second));
+        assertThat(carService.getAllCars().size(), is(2));
     }
 
     @Test
     public void deleteNotExistingItem() {
-        Map<Long, CarInStore> repository = new HashMap<>();
-        repository.put(1L, new CarInStore());
-        carService.setStoredCars(repository);
-        carService.deleteCar(2L);
-        Map<Long, CarInStore> expectedResponse = new HashMap<>();
-        expectedResponse.put(1L, new CarInStore());
-        assertEquals(carService.getStoredCars(), expectedResponse);
+        CarInStore first = new CarInStore(new Car(), 0, "");
+        carService.addCarToStore(first);
+        carService.deleteCar(20);
+        assertTrue(carService.getAllCars().contains(first));
+        assertThat(carService.getAllCars().size(), is(1));
     }
 }

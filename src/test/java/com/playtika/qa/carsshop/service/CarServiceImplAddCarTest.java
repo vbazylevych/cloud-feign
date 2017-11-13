@@ -4,9 +4,11 @@ import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
 import org.junit.Before;
 import org.junit.Test;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 
 public class CarServiceImplAddCarTest {
@@ -36,21 +38,20 @@ public class CarServiceImplAddCarTest {
 
     @Test
     public void addCarStoresDataInRepository() {
-        Map<Long, CarInStore> expectedRepository = new ConcurrentHashMap<>();
+
         CarInStore first = new CarInStore(new Car(), 100500, "Lera");
         CarInStore second = new CarInStore(new Car(), 10000, "Sema");
-        expectedRepository.put(1L, first);
-        expectedRepository.put(2L, second);
-
         carService.addCarToStore(first);
         carService.addCarToStore(second);
-        assertEquals(expectedRepository, carService.getStoredCars());
+        assertTrue( carService.getAllCars().contains(first));
+        assertTrue (carService.getAllCars().contains(second));
+        assertThat(carService.getAllCars().size(),is(2));
     }
 
     @Test
     public void emptyCarCanBeAdded() {
         CarInStore emptyCarInStore = new CarInStore(new Car(), 0, "");
-        assertEquals(1L, carService.addCarToStore(emptyCarInStore).getCar().getId());
+        assertEquals(1, carService.addCarToStore(emptyCarInStore).getCar().getId());
     }
     @Test
     public void theSameCarsCanBeAdded() {
