@@ -135,6 +135,5 @@ public class CarControllerIntegrationTest {
     public void deleteCar() throws Exception {
         mockMvc.perform(delete("/cars/3").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
     }
 }

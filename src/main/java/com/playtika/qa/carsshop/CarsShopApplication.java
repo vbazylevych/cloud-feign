@@ -13,13 +13,13 @@ import org.springframework.boot.autoconfigure.websocket.WebSocketAutoConfigurati
 
 
 @SpringBootApplication
-/*@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class,
+@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class,
         JmxAutoConfiguration.class,
         MultipartAutoConfiguration.class,
         PropertyPlaceholderAutoConfiguration.class,
         SpringApplicationAdminJmxAutoConfiguration.class,
         WebClientAutoConfiguration.class,
-        WebSocketAutoConfiguration.class}) */
+        WebSocketAutoConfiguration.class})
 public class CarsShopApplication {
 
     public static void main(String[] args) {
