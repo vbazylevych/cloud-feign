@@ -32,7 +32,7 @@ public class CarControllerSystemTest {
     }
 
     @Test
-    public void allMethodsTest() throws Exception {
+    public void workWithCarShop() throws Exception {
         String firstCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
         String secondCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
 
