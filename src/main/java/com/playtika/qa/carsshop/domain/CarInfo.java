@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarInStore {
-    private Car car;
-   private  CarInfo carInfo;
+public class CarInfo {
+    private int price;
+    private String contact;
 }

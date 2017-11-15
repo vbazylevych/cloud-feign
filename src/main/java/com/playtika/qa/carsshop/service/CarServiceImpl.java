@@ -1,6 +1,7 @@
 package com.playtika.qa.carsshop.service;
 
 import com.playtika.qa.carsshop.domain.CarInStore;
+import com.playtika.qa.carsshop.domain.CarInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +26,13 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public Map<String, Object> getCar(long id) {
-        Map<String, Object> response = new HashMap<>();
+    public CarInfo getCar(long id) {
+        CarInfo response = new CarInfo();
         try {
-            response.put("price", storedCars.get(id).getPrice());
-            response.put("contact", storedCars.get(id).getContact());
+            int price = storedCars.get(id).getCarInfo().getPrice();
+            String contact = storedCars.get(id).getCarInfo().getContact();
+            response.setPrice(price);
+            response.setContact(contact);
             log.info("Car with id {} was successfully founded", id);
         } catch (Exception e) {
             log.info("Can't find car with id {}", id);

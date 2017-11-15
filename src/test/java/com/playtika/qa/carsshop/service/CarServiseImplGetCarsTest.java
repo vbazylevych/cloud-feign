@@ -2,6 +2,7 @@ package com.playtika.qa.carsshop.service;
 
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
+import com.playtika.qa.carsshop.domain.CarInfo;
 import org.junit.Before;
 import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
@@ -24,7 +25,7 @@ public class CarServiseImplGetCarsTest {
 
     @Test
     public void oneCarCanBeReturned() {
-        CarInStore first = new CarInStore(new Car(), 1, "Lera");
+        CarInStore first = new CarInStore(new Car(), new CarInfo( 1, "Lera"));
         carService.addCarToStore(first);
         assertTrue(carService.getAllCars().contains(first));
         assertThat(carService.getAllCars().size(), is(1));

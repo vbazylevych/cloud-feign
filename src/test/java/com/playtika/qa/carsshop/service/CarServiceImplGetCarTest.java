@@ -2,6 +2,7 @@ package com.playtika.qa.carsshop.service;
 
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
+import com.playtika.qa.carsshop.domain.CarInfo;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,9 +18,9 @@ public class CarServiceImplGetCarTest {
     @Before
     public void init() {
         carService = new CarServiceImpl();
-        CarInStore first = new CarInStore(new Car(), 1, "Lera");
-        CarInStore second = new CarInStore(new Car(), 2, "Sema");
-        CarInStore third = new CarInStore(new Car(), 0, "");
+        CarInStore first = new CarInStore(new Car(), new CarInfo(1, "Lera"));
+        CarInStore second = new CarInStore(new Car(), new CarInfo( 2, "Sema"));
+        CarInStore third = new CarInStore(new Car(), new CarInfo(100500, "kot"));
         carService.addCarToStore(first);
         carService.addCarToStore(second);
         carService.addCarToStore(third);
@@ -27,44 +28,37 @@ public class CarServiceImplGetCarTest {
 
     @Test
     public void getCarReturnsAppropriateCar() {
-
-        Map<String, Object> expectedResponse = new HashMap<>();
-        expectedResponse.put("price", 2);
-        expectedResponse.put("contact", "Sema");
+        CarInfo expectedResponse = new CarInfo(2, "Sema");
         assertEquals(expectedResponse, carService.getCar(2));
     }
 
     @Test
     public void getCarReturnsFirstCar() {
-        Map<String, Object> expectedResponse = new HashMap<>();
-        expectedResponse.put("price", 1);
-        expectedResponse.put("contact", "Lera");
+        CarInfo expectedResponse = new CarInfo(1, "Lera");
         assertEquals(expectedResponse, carService.getCar(1));
     }
 
     @Test
     public void getCarReturnsLastCar() {
-        Map<String, Object> expectedResponse = new HashMap<>();
-        expectedResponse.put("price", 0);
-        expectedResponse.put("contact", "");
-        assertEquals(expectedResponse, carService.getCar(3));
+        CarInfo carInfo = new CarInfo(100500,"kot");
+        assertEquals(carInfo, carService.getCar(3));
     }
 
     @Test
     public void getCarReturnsEmptyCarIfIdMoreThanExist() {
-        Map<String, Object> expectedResponse = new HashMap<>();
+        CarInfo expectedResponse = new CarInfo();
         assertEquals(expectedResponse, carService.getCar(100500));
     }
 
     @Test
     public void getCarReturnsEmptyCarIfIdIsNegative() {
-        Map<String, Object> expectedResponse = new HashMap<>();
+        CarInfo expectedResponse = new CarInfo();
         assertEquals(expectedResponse, carService.getCar(-1));
     }
 
     @Test
     public void getCarReturnsEmptyCarIfIdIsZero() {
-        Map<String, Object> expectedResponse = new HashMap<>();
+       CarInfo expectedResponse = new CarInfo();
         assertEquals(expectedResponse, carService.getCar(0));
     }
 
@@ -73,7 +67,7 @@ public class CarServiceImplGetCarTest {
        carService.deleteCar(1);
        carService.deleteCar(2);
        carService.deleteCar(3);
-        Map<String, Object> expectedResponse = new HashMap<>();
+        CarInfo expectedResponse = new CarInfo();
         assertEquals(expectedResponse, carService.getCar(1));
     }
 }

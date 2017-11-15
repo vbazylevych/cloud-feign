@@ -2,6 +2,7 @@ package com.playtika.qa.carsshop.service;
 
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
+import com.playtika.qa.carsshop.domain.CarInfo;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,15 +22,15 @@ public class CarServiceImplAddCarTest {
 
     @Test
     public void addCarReturnsCarWithGeneratedId() {
-        CarInStore carWithAnyId = new CarInStore(new Car(1, "kot", "krot", 100L), 100500, "Lera");
-        CarInStore carWithGeneratedId = new CarInStore(new Car(1, "kot", "krot", 1L), 100500, "Lera");
+        CarInStore carWithAnyId = new CarInStore(new Car(1, "kot", "krot", 100L), new CarInfo(100500, "Lera"));
+        CarInStore carWithGeneratedId = new CarInStore(new Car(1, "kot", "krot", 1L), new CarInfo( 100500, "Lera"));
         assertEquals(carService.addCarToStore(carWithAnyId), carWithGeneratedId);
     }
 
     @Test
     public void addCarsAssignsSequentialId() {
-        CarInStore first = new CarInStore(new Car(), 100500, "Lera");
-        CarInStore second = new CarInStore(new Car(), 10000, "Sema");
+        CarInStore first = new CarInStore(new Car(), new CarInfo(100500, "Lera"));
+        CarInStore second = new CarInStore(new Car(), new CarInfo( 10000, "Sema"));
         CarInStore firstCarInStore = carService.addCarToStore(first);
         assertEquals(1, firstCarInStore.getCar().getId());
         CarInStore secondCarInStore = carService.addCarToStore(second);
@@ -39,8 +40,8 @@ public class CarServiceImplAddCarTest {
     @Test
     public void addCarStoresDataInRepository() {
 
-        CarInStore first = new CarInStore(new Car(), 100500, "Lera");
-        CarInStore second = new CarInStore(new Car(), 10000, "Sema");
+        CarInStore first = new CarInStore(new Car(), new CarInfo( 100500, "Lera"));
+        CarInStore second = new CarInStore(new Car(), new CarInfo( 10000, "Sema"));
         carService.addCarToStore(first);
         carService.addCarToStore(second);
         assertTrue( carService.getAllCars().contains(first));
@@ -50,12 +51,12 @@ public class CarServiceImplAddCarTest {
 
     @Test
     public void emptyCarCanBeAdded() {
-        CarInStore emptyCarInStore = new CarInStore(new Car(), 0, "");
+        CarInStore emptyCarInStore = new CarInStore(new Car(), new CarInfo( 0, ""));
         assertEquals(1, carService.addCarToStore(emptyCarInStore).getCar().getId());
     }
     @Test
     public void theSameCarsCanBeAdded() {
-        CarInStore car = new CarInStore(new Car(), 100500, "Lera");
+        CarInStore car = new CarInStore(new Car(), new CarInfo(100500, "Lera"));
         CarInStore firstCarInStore = carService.addCarToStore(car);
         assertEquals(1, firstCarInStore.getCar().getId());
         CarInStore secondCarInStore = carService.addCarToStore(car);

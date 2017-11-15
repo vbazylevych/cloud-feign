@@ -2,6 +2,7 @@ package com.playtika.qa.carsshop.service;
 
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
+import com.playtika.qa.carsshop.domain.CarInfo;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,16 +28,16 @@ public class CarServiceImplDeleteTest {
     @Test
     public void deleteWhenRepositoryHasOneItem() {
 
-        carService.addCarToStore(new CarInStore(new Car(), 0, ""));
+        carService.addCarToStore(new CarInStore(new Car(), new CarInfo()));
         carService.deleteCar(1);
         assertTrue(carService.getAllCars().isEmpty());
     }
 
     @Test
     public void deleteWhenRepositoryHasSeveralItems() {
-        CarInStore first = new CarInStore(new Car(), 0, "");
-        CarInStore second = new CarInStore(new Car(), 0, "");
-        CarInStore third = new CarInStore(new Car(), 0, "");
+        CarInStore first = new CarInStore(new Car(),new CarInfo());
+        CarInStore second = new CarInStore(new Car(), new CarInfo());
+        CarInStore third = new CarInStore(new Car(), new CarInfo());
         carService.addCarToStore(first);
         carService.addCarToStore(second);
         carService.addCarToStore(third);
@@ -49,7 +50,7 @@ public class CarServiceImplDeleteTest {
 
     @Test
     public void deleteNotExistingItem() {
-        CarInStore first = new CarInStore(new Car(), 0, "");
+        CarInStore first = new CarInStore(new Car(),new CarInfo());
         carService.addCarToStore(first);
         carService.deleteCar(20);
         assertTrue(carService.getAllCars().contains(first));

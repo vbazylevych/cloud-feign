@@ -2,6 +2,7 @@ package com.playtika.qa.carsshop.web;
 
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
+import com.playtika.qa.carsshop.domain.CarInfo;
 import com.playtika.qa.carsshop.service.CarService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +28,14 @@ public class CarController {
                                 @RequestParam("contact") String contactDetails,
                                 @RequestBody Car car) {
         log.info("Create new car request was received");
-        CarInStore carInStore = new CarInStore(car, price, contactDetails);
+
+        CarInStore carInStore = new CarInStore(car, new CarInfo(price, contactDetails));
         CarInStore newCarInStore = service.addCarToStore(carInStore);
         return newCarInStore.getCar().getId();
     }
 
     @GetMapping(value = "/cars/{id}")
-    public Map<String, Object> getCar(@PathVariable(value = "id") long id) {
+    public CarInfo getCar(@PathVariable(value = "id") long id) {
         log.info("get request wirh id {} received", id);
         return service.getCar(id);
     }

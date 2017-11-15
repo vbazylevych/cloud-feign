@@ -3,6 +3,7 @@ package com.playtika.qa.carsshop.web;
 
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
+import com.playtika.qa.carsshop.domain.CarInfo;
 import com.playtika.qa.carsshop.service.CarService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,9 +37,7 @@ public class CarControllerIntegrationTest {
 
     @Test
     public void getExistingCar() throws Exception {
-        Map<String, Object> response = new HashMap<>();
-        response.put("price", 1);
-        response.put("contact", "cont");
+        CarInfo response = new CarInfo(1, "cont");
         when(carService.getCar(1)).thenReturn(response);
 
         mockMvc.perform(get("/cars/1").accept(MediaType.APPLICATION_JSON))
@@ -50,7 +49,7 @@ public class CarControllerIntegrationTest {
 
     @Test
     public void getNotExistingCar() throws Exception {
-        Map<String, Object> response = new HashMap<>();
+        CarInfo response = new CarInfo();
         when(carService.getCar(1)).thenReturn(response);
 
         mockMvc.perform(get("/cars/1").accept(MediaType.APPLICATION_JSON))
@@ -62,7 +61,7 @@ public class CarControllerIntegrationTest {
     @Test
     public void addCar() throws Exception {
         Car car = new Car(1, "", "", 1);
-        CarInStore carInStore = new CarInStore(car, 10, "cont");
+        CarInStore carInStore = new CarInStore(car, new CarInfo(10, "cont"));
 
         when(carService.addCarToStore(carInStore)).thenReturn(carInStore);
         String jsonString = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
@@ -86,10 +85,11 @@ public class CarControllerIntegrationTest {
 
     }
 
-    @Test
+   @Test
     public void getAllCarsReturnsOneCar() throws Exception {
         Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
-        storedCars.put(1L, new CarInStore(new Car(10, "red", "opel", 1), 1, "con"));
+        storedCars.put(1L, new CarInStore(new Car(10, "red", "opel", 1),
+                new CarInfo(1, "con")));
         when(carService.getAllCars()).thenReturn(storedCars.values());
 
         mockMvc.perform(get("/cars").accept(MediaType.APPLICATION_JSON))
@@ -99,17 +99,17 @@ public class CarControllerIntegrationTest {
                 .andExpect(jsonPath("$[0].car.color").value("red"))
                 .andExpect(jsonPath("$[0].car.model").value("opel"))
                 .andExpect(jsonPath("$[0].car.id").value(1))
-                .andExpect(jsonPath("$[0].price").value(1))
-                .andExpect(jsonPath("$[0].contact").value("con"));
+                .andExpect(jsonPath("$[0].carInfo.price").value(1))
+                .andExpect(jsonPath("$[0].carInfo.contact").value("con"));
 
     }
 
     @Test
     public void getSeveralCars() throws Exception {
         Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
-        storedCars.put(1L, new CarInStore(new Car(10, "red", "opel", 1), 1, "con"));
-        storedCars.put(2L, new CarInStore(new Car(20, "blue", "mazda", 2), 1, "con"));
-        storedCars.put(3L, new CarInStore(new Car(30, "black", "reno", 3), 1, "con"));
+        storedCars.put(1L, new CarInStore(new Car(10, "red", "opel", 1), new CarInfo(1, "con")));
+        storedCars.put(2L, new CarInStore(new Car(20, "blue", "mazda", 2), new CarInfo(1, "con")));
+        storedCars.put(3L, new CarInStore(new Car(30, "black", "reno", 3), new CarInfo(1, "con")));
         when(carService.getAllCars()).thenReturn(storedCars.values());
 
         mockMvc.perform(get("/cars").accept(MediaType.APPLICATION_JSON))

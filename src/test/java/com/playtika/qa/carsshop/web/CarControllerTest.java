@@ -2,6 +2,7 @@ package com.playtika.qa.carsshop.web;
 
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
+import com.playtika.qa.carsshop.domain.CarInfo;
 import com.playtika.qa.carsshop.service.CarService;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class CarControllerTest {
     @Test
     public void addCarReturnId() throws Exception {
         Car car = new Car(1, "", "", 1);
-        CarInStore carInStore = new CarInStore(car, 10, "cont");
+        CarInStore carInStore = new CarInStore(car, new CarInfo( 10, "cont"));
 
         when(carService.addCarToStore(carInStore)).thenReturn(carInStore);
         long id = controller.createCar(10, "cont", car);
@@ -52,18 +53,15 @@ public class CarControllerTest {
 
     @Test
     public void getCarReturnsCarInfo() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("price", 1);
-        response.put("contact", "cont");
+        CarInfo response = new CarInfo(1, "cont");
+
         when(carService.getCar(1)).thenReturn(response);
-        assertThat(controller.getCar(1).get("price"), is(response.get("price")));
-        assertThat(controller.getCar(1).get("contact"), is(response.get("contact")));
-        assertThat(controller.getCar(1).size(), is(2));
+       assertEquals(response, controller.getCar(1));
     }
 
     @Test
     public void getCarReturnsEmptyCarInfoIfCarIsAbsent() {
-        Map<String, Object> response = new HashMap<>();
+        CarInfo response = new CarInfo();
         when(carService.getCar(1)).thenReturn(response);
         assertEquals(controller.getCar(1), response);
     }
@@ -71,8 +69,8 @@ public class CarControllerTest {
     @Test
     public void getAllCarsReturnsCars() throws Exception {
         Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
-        storedCars.put(1L, new CarInStore(new Car(10, "red", "opel", 1), 1, "con"));
-        storedCars.put(2L, new CarInStore(new Car(20, "blue", "mazda", 2), 1, "con"));
+        storedCars.put(1L, new CarInStore(new Car(10, "red", "opel", 1), new CarInfo()));
+        storedCars.put(2L, new CarInStore(new Car(20, "blue", "mazda", 2), new CarInfo()));
         when(carService.getAllCars()).thenReturn(storedCars.values());
         assertEquals(controller.getAllCars(), storedCars.values());
     }
