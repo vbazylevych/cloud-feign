@@ -7,14 +7,11 @@ import com.playtika.qa.carsshop.service.CarService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,8 +41,7 @@ public class CarControllerTest {
     @Test
     public void addCarReturnId() throws Exception {
         Car car = new Car(1, "", "", 1);
-        CarInStore carInStore = new CarInStore(car, new CarInfo( 10, "cont"));
-
+        CarInStore carInStore = new CarInStore(car, new CarInfo(10, "cont"));
         when(carService.addCarToStore(carInStore)).thenReturn(carInStore);
         long id = controller.createCar(10, "cont", car);
         assertThat(id, is(1L));
@@ -54,9 +50,8 @@ public class CarControllerTest {
     @Test
     public void getCarReturnsCarInfo() {
         CarInfo response = new CarInfo(1, "cont");
-
         when(carService.getCar(1)).thenReturn(response);
-       assertEquals(response, controller.getCar(1));
+        assertEquals(response, controller.getCar(1));
     }
 
     @Test
@@ -69,14 +64,14 @@ public class CarControllerTest {
     @Test
     public void getAllCarsReturnsCars() throws Exception {
         Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
-        storedCars.put(1L, new CarInStore(new Car(10, "red", "opel", 1), new CarInfo()));
-        storedCars.put(2L, new CarInStore(new Car(20, "blue", "mazda", 2), new CarInfo()));
+        storedCars.put(1L, new CarInStore(new Car(10, "red", "opel", 1), new CarInfo(1,"A")));
+        storedCars.put(2L, new CarInStore(new Car(20, "blue", "mazda", 2), new CarInfo(2, "B")));
         when(carService.getAllCars()).thenReturn(storedCars.values());
         assertEquals(controller.getAllCars(), storedCars.values());
     }
 
     @Test
-    public void getAllCarsReturnsEmptyResponseThenCarsAreAbsent() throws Exception {
+    public void gallCarsReturnsEmptyResponseThenCarsAreAbsent() throws Exception {
         Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
         when(carService.getAllCars()).thenReturn(storedCars.values());
         assertEquals(controller.getAllCars(), storedCars.values());
