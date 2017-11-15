@@ -31,6 +31,6 @@ public class CarServiseImplGetCarsTest {
         assertThat(carService.getAllCars().size(), is(1));
     }
 
- //@Test several cars can be returned was tested in CarServiceImplAddCarTest.addCarStoresDataInRepository()
+ //@Test several cars can be returned was tested in CarServiceImplAddCarTest.severalCarsCanBeStoredInRepository()
 
 }

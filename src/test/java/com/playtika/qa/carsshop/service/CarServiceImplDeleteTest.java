@@ -27,7 +27,6 @@ public class CarServiceImplDeleteTest {
 
     @Test
     public void deleteWhenRepositoryHasOneItem() {
-
         carService.addCarToStore(new CarInStore(new Car(), new CarInfo()));
         carService.deleteCar(1);
         assertTrue(carService.getAllCars().isEmpty());
@@ -35,9 +34,9 @@ public class CarServiceImplDeleteTest {
 
     @Test
     public void deleteWhenRepositoryHasSeveralItems() {
-        CarInStore first = new CarInStore(new Car(),new CarInfo());
-        CarInStore second = new CarInStore(new Car(), new CarInfo());
-        CarInStore third = new CarInStore(new Car(), new CarInfo());
+        CarInStore first = new CarInStore(new Car(),new CarInfo(1, "kot"));
+        CarInStore second = new CarInStore(new Car(), new CarInfo(2, "krot"));
+        CarInStore third = new CarInStore(new Car(), new CarInfo(3, "begemot"));
         carService.addCarToStore(first);
         carService.addCarToStore(second);
         carService.addCarToStore(third);

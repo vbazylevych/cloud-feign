@@ -27,43 +27,43 @@ public class CarServiceImplGetCarTest {
     }
 
     @Test
-    public void getCarReturnsAppropriateCar() {
+    public void canReturnAppropriateCar() {
         CarInfo expectedResponse = new CarInfo(2, "Sema");
         assertEquals(expectedResponse, carService.getCar(2));
     }
 
     @Test
-    public void getCarReturnsFirstCar() {
+    public void canReturnFirstCar() {
         CarInfo expectedResponse = new CarInfo(1, "Lera");
         assertEquals(expectedResponse, carService.getCar(1));
     }
 
     @Test
-    public void getCarReturnsLastCar() {
+    public void canReturnLastCar() {
         CarInfo carInfo = new CarInfo(100500,"kot");
         assertEquals(carInfo, carService.getCar(3));
     }
 
     @Test
-    public void getCarReturnsEmptyCarIfIdMoreThanExist() {
+    public void canReturnEmptyCarIfIdMoreThanExist() {
         CarInfo expectedResponse = new CarInfo();
         assertEquals(expectedResponse, carService.getCar(100500));
     }
 
     @Test
-    public void getCarReturnsEmptyCarIfIdIsNegative() {
+    public void canrReturnEmptyCarIfIdIsNegative() {
         CarInfo expectedResponse = new CarInfo();
         assertEquals(expectedResponse, carService.getCar(-1));
     }
 
     @Test
-    public void getCarReturnsEmptyCarIfIdIsZero() {
+    public void canReturnEmptyCarIfIdIsZero() {
        CarInfo expectedResponse = new CarInfo();
         assertEquals(expectedResponse, carService.getCar(0));
     }
 
     @Test
-    public void getCarReturnsEmptyCarIfRepositoryIsEmpty() {
+    public void canReturnEmptyCarIfRepositoryIsEmpty() {
        carService.deleteCar(1);
        carService.deleteCar(2);
        carService.deleteCar(3);
