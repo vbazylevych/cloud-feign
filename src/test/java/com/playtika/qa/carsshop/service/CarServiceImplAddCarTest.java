@@ -3,31 +3,20 @@ package com.playtika.qa.carsshop.service;
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
 import com.playtika.qa.carsshop.domain.CarInfo;
+import com.playtika.qa.carsshop.web.NotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.junit.Assert.*;
 
 
 public class CarServiceImplAddCarTest {
-    private CarService carService;
-
-    @Before
-    public void init() {
-        carService = new CarServiceImpl();
-    }
-
-    @Test
-    public void addCarGeneratesId() {
-        CarInStore carWithAnyId = new CarInStore(new Car(1, "kot", "krot", 100L), new CarInfo());
-        CarInStore carWithGeneratedId = new CarInStore(new Car(1, "kot", "krot", 1L), new CarInfo());
-        assertEquals(carService.addCarToStore(carWithAnyId), carWithGeneratedId);
-    }
+    private CarService carService = new CarServiceImpl();
 
     @Test
     public void addCarsAssignsSequentialId() {
@@ -40,13 +29,11 @@ public class CarServiceImplAddCarTest {
     }
 
     @Test
-    public void severalCarsCanBeStoredInRepository() {
-
-        CarInStore first = new CarInStore(new Car(), new CarInfo(100500, "Lera"));
-        CarInStore second = new CarInStore(new Car(), new CarInfo(10000, "Sema"));
+    public void allCarsReturnsCars() {
+        CarInStore first = new CarInStore(new Car(), new CarInfo(1, "Lera"));
+        CarInStore second = new CarInStore(new Car(), new CarInfo(2, "kot"));
         carService.addCarToStore(first);
         carService.addCarToStore(second);
-
         Collection<CarInStore> allCars = carService.getAllCars();
         assertTrue(allCars.contains(first));
         assertTrue(allCars.contains(second));
@@ -54,17 +41,23 @@ public class CarServiceImplAddCarTest {
     }
 
     @Test
-    public void emptyCarCanBeAdded() {
-        CarInStore emptyCarInStore = new CarInStore(new Car(), new CarInfo());
-        assertEquals(1, carService.addCarToStore(emptyCarInStore).getCar().getId());
+    public void allCarsReturnsEmptyResponseIfRepositoryIsEmpty() {
+        assertThat(carService.getAllCars(), is(empty()));
     }
 
     @Test
-    public void theSameCarsCanBeAdded() {
-        CarInStore car = new CarInStore(new Car(), new CarInfo(100500, "Lera"));
-        CarInStore firstCarInStore = carService.addCarToStore(car);
-        assertEquals(1, firstCarInStore.getCar().getId());
-        CarInStore secondCarInStore = carService.addCarToStore(car);
-        assertEquals(2, secondCarInStore.getCar().getId());
+    public void getCarReturnsAppropriateCar() {
+        CarInfo expectedResponse = new CarInfo(2, "Sema");
+        CarInStore carInStore = new CarInStore(new Car(), expectedResponse);
+        CarInStore carInStoreWrong = new CarInStore(new Car(), new CarInfo(10, "kot"));
+        carService.addCarToStore(carInStore);
+        assertEquals(Optional.of(expectedResponse), carService.getCar(1));
     }
+
+    @Test
+    public void getCarReturnsNotFoundIfCarIsAbsent() {
+       assertFalse(carService.getCar(-10).isPresent());
+    }
+
 }
+

@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -26,18 +26,13 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public CarInfo getCar(long id) {
-        CarInfo response = new CarInfo();
+    public Optional<CarInfo> getCar(long id) {
         try {
-            int price = storedCars.get(id).getCarInfo().getPrice();
-            String contact = storedCars.get(id).getCarInfo().getContact();
-            response.setPrice(price);
-            response.setContact(contact);
-            log.info("Car with id {} was successfully founded", id);
+            return Optional.of(storedCars.get(id).getCarInfo());
         } catch (Exception e) {
-            log.info("Can't find car with id {}", id);
+            log.error("Cant find car");
+            return Optional.empty();
         }
-        return response;
     }
 
     @Override
@@ -47,12 +42,14 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public void deleteCar(long id) {
-        if (storedCars.containsKey(id)) {
-            storedCars.remove(id);
+    public Boolean deleteCar(long id) {
+        CarInStore removed = storedCars.remove(id);
+        if (removed.equals(null)) {
             log.info("Car {} was deleted", id);
+            return false;
         } else {
             log.warn("Cant delete car with id {}", id);
+            return true;
         }
     }
 }

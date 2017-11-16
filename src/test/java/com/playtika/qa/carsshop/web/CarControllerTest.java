@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -38,7 +39,7 @@ public class CarControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
-    @Test
+/*    @Test
     public void addCarReturnId() throws Exception {
         Car car = new Car(1, "", "", 1);
         CarInStore carInStore = new CarInStore(car, new CarInfo(10, "cont"));
@@ -49,7 +50,7 @@ public class CarControllerTest {
 
     @Test
     public void getCarReturnsCarInfo() {
-        CarInfo response = new CarInfo(1, "cont");
+       CarInfo response = new CarInfo(1, "cont");
         when(carService.getCar(1)).thenReturn(response);
         assertEquals(response, controller.getCar(1));
     }
@@ -82,5 +83,5 @@ public class CarControllerTest {
         mockMvc.perform(delete("/cars/3").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         verify(carService).deleteCar(3);
-    }
+    } */
 }

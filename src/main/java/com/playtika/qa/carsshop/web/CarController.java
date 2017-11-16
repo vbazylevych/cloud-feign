@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 
@@ -25,8 +26,8 @@ public class CarController {
 
     @PostMapping(value = "/cars", produces = MediaType.APPLICATION_JSON_VALUE)
     public long createCar(@RequestParam("price") int price,
-                                @RequestParam("contact") String contactDetails,
-                                @RequestBody Car car) {
+                          @RequestParam("contact") String contactDetails,
+                          @RequestBody Car car) {
         log.info("Create new car request was received");
 
         CarInStore carInStore = new CarInStore(car, new CarInfo(price, contactDetails));
@@ -35,11 +36,15 @@ public class CarController {
     }
 
     @GetMapping(value = "/cars/{id}")
-    public CarInfo getCar(@PathVariable(value = "id") long id) {
-        log.info("get request wirh id {} received", id);
-        return service.getCar(id);
+    public Optional<CarInfo> getCar(@PathVariable(value = "id") long id) throws NotFoundException {
+        log.info("get request with id {} received", id);
+        Optional<CarInfo> carInfo = service.getCar(id);
+        if (!carInfo.isPresent()) {
+            throw new NotFoundException("Can't find car");
+        } else {
+            return carInfo;
+        }
     }
-
 
     @GetMapping("/cars")
     public Collection<CarInStore> getAllCars() {
