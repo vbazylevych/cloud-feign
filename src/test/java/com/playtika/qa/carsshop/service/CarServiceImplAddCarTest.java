@@ -55,9 +55,26 @@ public class CarServiceImplAddCarTest {
     }
 
     @Test
-    public void getCarReturnsNotFoundIfCarIsAbsent() {
-       assertFalse(carService.getCar(-10).isPresent());
+    public void getCarReturnsEmptyResponseIfCarIsAbsent() {
+        assertFalse(carService.getCar(-10).isPresent());
     }
 
+    @Test
+    public void deleteWhenRepositoryIsEmpty() {
+        assertFalse(carService.deleteCar(3));
+        assertTrue(carService.getAllCars().isEmpty());
+    }
+
+    @Test
+    public void deleteWhenRepositoryHasSeveralItems() {
+        CarInStore first = new CarInStore(new Car(), new CarInfo(1, "kot"));
+        CarInStore second = new CarInStore(new Car(), new CarInfo(2, "krot"));
+        carService.addCarToStore(first);
+        carService.addCarToStore(second);
+        assertTrue(carService.deleteCar(2));
+        assertTrue(carService.getAllCars().contains(first));
+        assertFalse(carService.getAllCars().contains(second));
+        assertThat(carService.getAllCars().size(), is(1));
+    }
 }
 

@@ -43,8 +43,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Boolean deleteCar(long id) {
-        CarInStore removed = storedCars.remove(id);
-        if (removed.equals(null)) {
+        if (storedCars.remove(id) == null) {
             log.info("Car {} was deleted", id);
             return false;
         } else {
