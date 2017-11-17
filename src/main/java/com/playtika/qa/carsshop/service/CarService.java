@@ -9,7 +9,7 @@ import java.util.Collection;
 public interface CarService {
     CarInStore addCarToStore(CarInStore carInStore);
 
-    Optional<CarInfo>getCar(long id);
+  Optional <CarInfo> getCar(long id);
 
     Collection<CarInStore> getAllCars();
 

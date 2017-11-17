@@ -36,13 +36,13 @@ public class CarController {
     }
 
     @GetMapping(value = "/cars/{id}")
-    public Optional<CarInfo> getCar(@PathVariable(value = "id") long id) throws NotFoundException {
+    public CarInfo getCar(@PathVariable(value = "id") long id) throws NotFoundException {
         log.info("get request with id {} received", id);
         Optional<CarInfo> carInfo = service.getCar(id);
         if (!carInfo.isPresent()) {
             throw new NotFoundException("Can't find car");
         } else {
-            return carInfo;
+            return carInfo.get();
         }
     }
 

@@ -6,8 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class CarInStore {
-    private Car car;
-   private  CarInfo carInfo;
+    private final Car car;
+    private final CarInfo carInfo;
 }

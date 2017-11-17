@@ -15,13 +15,13 @@ import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.*;
 
 
-public class CarServiceImplAddCarTest {
+public class ServiceUnitTests {
     private CarService carService = new CarServiceImpl();
 
     @Test
     public void addCarsAssignsSequentialId() {
-        CarInStore first = new CarInStore(new Car(), new CarInfo());
-        CarInStore second = new CarInStore(new Car(), new CarInfo());
+        CarInStore first = new CarInStore(new Car(), new CarInfo(1, ""));
+        CarInStore second = new CarInStore(new Car(), new CarInfo(1,""));
         CarInStore firstCarInStore = carService.addCarToStore(first);
         assertEquals(1, firstCarInStore.getCar().getId());
         CarInStore secondCarInStore = carService.addCarToStore(second);
