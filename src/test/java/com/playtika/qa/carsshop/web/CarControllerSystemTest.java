@@ -45,22 +45,13 @@ public class CarControllerSystemTest {
     @Test
     public void addCar() throws Exception {
         String firstCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
-        mockMvc.perform(post("/cars?price=10&contact=cont")
-                .content(firstCar).accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        addCarInStore(firstCar);
     }
 
     @Test
     public void getCar() throws Exception {
         String firstCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
-        String id = mockMvc.perform(post("/cars?price=10&contact=cont")
-                .content(firstCar)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+        String id = addCarInStore(firstCar);
 
         mockMvc.perform(get("/cars/" + id)
                 .accept(MediaType.APPLICATION_JSON))
@@ -69,45 +60,37 @@ public class CarControllerSystemTest {
                 .andExpect(jsonPath("contact").value("cont"));
     }
 
+
     @Test
     public void getAllCars() throws Exception {
         String firstCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
         String secondCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
-        mockMvc.perform(post("/cars?price=10&contact=cont")
-                .content(firstCar)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(post("/cars?price=100&contact=cont2")
-                .content(secondCar)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        addCarInStore(firstCar);
+        addCarInStore(secondCar);
 
         mockMvc.perform(get("/cars")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
-
-
-
-
     public void delerteCar() throws Exception {
         String firstCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
-        String id = mockMvc.perform(post("/cars?price=10&contact=cont")
-                .content(firstCar)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+        String id = addCarInStore(firstCar);
 
         mockMvc.perform(delete("/cars/" + id)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    private String addCarInStore(String car) throws Exception {
+        return mockMvc.perform(post("/cars?price=10&contact=cont")
+                .content(car)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
     }
 
 }

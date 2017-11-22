@@ -3,7 +3,7 @@ package com.playtika.qa.carsshop.web;
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
 import com.playtika.qa.carsshop.domain.CarInfo;
-import com.playtika.qa.carsshop.service.CarService;
+import com.playtika.qa.carsshop.service.CarServiceRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +32,12 @@ public class CarControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CarService carService;
+    private CarServiceRepository carServiceRepository;
 
     @Test
     public void getExistingCar() throws Exception {
         Optional<CarInfo> response = Optional.of(new CarInfo(1, "cont"));
-        when(carService.getCar(1)).thenReturn(response);
+        when(carServiceRepository.get(1)).thenReturn(response);
 
         mockMvc.perform(get("/cars/1")
                 .accept(MediaType.APPLICATION_JSON))
@@ -49,7 +49,7 @@ public class CarControllerIntegrationTest {
 
     @Test
     public void getNotExistingCar() throws Exception {
-        when(carService.getCar(1)).thenReturn(Optional.empty());
+        when(carServiceRepository.get(1)).thenReturn(Optional.empty());
         mockMvc.perform(get("/cars/1")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -59,7 +59,7 @@ public class CarControllerIntegrationTest {
     public void addCar() throws Exception {
         Car car = new Car(1, "", "", 1);
         CarInStore carInStore = new CarInStore(car, new CarInfo(10, "cont"));
-        when(carService.addCarToStore(carInStore)).thenReturn(carInStore);
+        when(carServiceRepository.add(carInStore)).thenReturn(carInStore);
 
         String jsonString = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
         mockMvc.perform(post("/cars?price=10&contact=cont")
@@ -92,7 +92,7 @@ public class CarControllerIntegrationTest {
         Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
         storedCars.put(1L, new CarInStore(new Car(10, "red", "opel", 1),
                 new CarInfo(1, "con")));
-        when(carService.getAllCars()).thenReturn(storedCars.values());
+        when(carServiceRepository.getAll()).thenReturn(storedCars.values());
 
         mockMvc.perform(get("/cars")
                 .accept(MediaType.APPLICATION_JSON))
@@ -112,7 +112,7 @@ public class CarControllerIntegrationTest {
         storedCars.put(1L, new CarInStore(new Car(10, "red", "opel", 1), new CarInfo(1, "con1")));
         storedCars.put(2L, new CarInStore(new Car(20, "blue", "mazda", 2), new CarInfo(2, "con2")));
         storedCars.put(3L, new CarInStore(new Car(30, "black", "reno", 3), new CarInfo(3, "con3")));
-        when(carService.getAllCars()).thenReturn(storedCars.values());
+        when(carServiceRepository.getAll()).thenReturn(storedCars.values());
 
         mockMvc.perform(get("/cars")
                 .accept(MediaType.APPLICATION_JSON))
@@ -128,7 +128,7 @@ public class CarControllerIntegrationTest {
     @Test
     public void getNotExistingCars() throws Exception {
         Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
-        when(carService.getAllCars()).thenReturn(storedCars.values());
+        when(carServiceRepository.getAll()).thenReturn(storedCars.values());
 
         mockMvc.perform(get("/cars").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

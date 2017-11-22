@@ -3,17 +3,13 @@ package com.playtika.qa.carsshop.web;
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
 import com.playtika.qa.carsshop.domain.CarInfo;
-import com.playtika.qa.carsshop.service.CarService;
+import com.playtika.qa.carsshop.service.CarServiceRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 
 @Slf4j
@@ -21,7 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @AllArgsConstructor
 public class CarController {
 
-    private final CarService service;
+    private final CarServiceRepository service;
 
 
     @PostMapping(value = "/cars", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -31,29 +27,27 @@ public class CarController {
         log.info("Create new car request was received");
 
         CarInStore carInStore = new CarInStore(car, new CarInfo(price, contactDetails));
-        CarInStore newCarInStore = service.addCarToStore(carInStore);
+        CarInStore newCarInStore = service.add(carInStore);
         return newCarInStore.getCar().getId();
     }
 
     @GetMapping(value = "/cars/{id}")
     public CarInfo getCar(@PathVariable(value = "id") long id) throws NotFoundException {
         log.info("get request with id {} received", id);
-        Optional<CarInfo> carInfo = service.getCar(id);
-        if (!carInfo.isPresent()) {
-            throw new NotFoundException("Can't find car");
-        } else {
-            return carInfo.get();
-        }
+
+        return service.get(id)
+                .map(CarInStore::getCarInfo)
+                .orElseThrow(() -> new NotFoundException("Car not found"));
     }
 
     @GetMapping("/cars")
     public Collection<CarInStore> getAllCars() {
         log.info("Get all cars request was received");
-        return service.getAllCars();
+        return service.getAll();
     }
 
     @DeleteMapping("cars/{id}")
     public void deleteCars(@PathVariable("id") long id) {
-        service.deleteCar(id);
+        service.delete(id);
     }
 }
