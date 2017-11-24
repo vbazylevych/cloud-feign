@@ -13,17 +13,12 @@ import org.springframework.boot.autoconfigure.websocket.WebSocketAutoConfigurati
 
 
 @SpringBootApplication
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class,
-        JmxAutoConfiguration.class,
-        MultipartAutoConfiguration.class,
-        PropertyPlaceholderAutoConfiguration.class,
-        SpringApplicationAdminJmxAutoConfiguration.class,
-        WebClientAutoConfiguration.class,
-        WebSocketAutoConfiguration.class})
+
 public class CarsShopApplication {
 
     public static void main(String[] args) {
 
         SpringApplication.run(CarsShopApplication.class, args);
+        //docs.jboss.org/hibernate/annotations/reference
     }
 }
