@@ -14,7 +14,7 @@ public class Car {
     private String plate_number;
     private String model;
     private String color;
-    private int year=1990;
+    private int year;
 
 
 

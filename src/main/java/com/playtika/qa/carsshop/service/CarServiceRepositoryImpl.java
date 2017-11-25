@@ -6,6 +6,7 @@ import com.playtika.qa.carsshop.dao.entity.DealEntity;
 import com.playtika.qa.carsshop.dao.entity.UserEntity;
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
+import com.playtika.qa.carsshop.domain.CarInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,18 +46,15 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         //  carInStore.getCar().setId(newId);
         //   storedCars.put(newId, carInStore);
         Car newCar = carInStore.getCar();
-        CarEntity newCarEntity = new CarEntity(0,
-                newCar.getPlate_number(),
-                newCar.getModel(),
-                newCar.getYear(),
-                newCar.getColor());
+        CarEntity newCarEntity = new CarEntity(newCar.getPlate_number(),
+                newCar.getModel(),newCar.getYear(), newCar.getColor());
 
         em.persist(newCarEntity);
         em.flush();
         Integer carId = newCarEntity.getId();
         carInStore.getCar().setId(carId);
 
-        UserEntity newUserEntity = new UserEntity(0, "Name", "",
+        UserEntity newUserEntity = new UserEntity("Name", "",
                 carInStore.getCarInfo().getContact());
 
 
@@ -64,7 +62,7 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         em.flush();
         Integer userId = newUserEntity.getId();
 
-        AdsEntity newAdsEntity = new AdsEntity(0, newUserEntity, newCarEntity,
+        AdsEntity newAdsEntity = new AdsEntity( newUserEntity, newCarEntity,
                 carInStore.getCarInfo().getPrice(), null);
 
         em.persist(newAdsEntity);
@@ -77,14 +75,21 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
     @Override
     public Optional<CarInStore> get(Integer id) {
 
-        Query query = em.createQuery("select a.price, a.contact from AdsEntity a" +
-                " where a.year=:id and a.deal_id = :deal");
+     /*   Query query = em.createQuery("select a.user, a.price from AdsEntity a" +
+                " where a.id=:id");
         query.setParameter("id", id);
-        query.setParameter("deal", null);
+        //query.setParameter("deal", null);
 
 
         List resultList = query.getResultList();
-        Object o = resultList.get(0);
+        Object o = resultList.get(0); */
+        AdsEntity adsEntity = em.find(AdsEntity.class, id);
+
+        CarEntity car = adsEntity.getCar();
+
+        CarInStore carInStore = new CarInStore(car, new CarInfo(adsEntity.getPrice(),
+                adsEntity.getUser().getContact()));
+
 
 
         return Optional.ofNullable(storedCars.get(id));
