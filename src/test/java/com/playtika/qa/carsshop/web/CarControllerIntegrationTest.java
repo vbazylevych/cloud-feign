@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarController.class)
 public class CarControllerIntegrationTest {
- /*   @Autowired
+   @Autowired
     private MockMvc mockMvc;
 
     @MockBean
@@ -36,7 +37,8 @@ public class CarControllerIntegrationTest {
 
     @Test
     public void getExistingCar() throws Exception {
-        Optional<CarInfo> response = Optional.of(new CarInfo(1, "cont"));
+        Optional<CarInStore> response = Optional.of(new CarInStore(new Car(),
+                                                    new CarInfo(1, "cont")));
         when(carServiceRepository.get(1)).thenReturn(response);
 
         mockMvc.perform(get("/cars/1")
@@ -59,11 +61,12 @@ public class CarControllerIntegrationTest {
     public void addCar() throws Exception {
         Car car = new Car(1, "", "", 1);
         CarInStore carInStore = new CarInStore(car, new CarInfo(10, "cont"));
-        when(carServiceRepository.add(carInStore)).thenReturn(carInStore);
+       when(carServiceRepository.add(any())).thenReturn(carInStore);
 
         String jsonString = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
         mockMvc.perform(post("/cars?price=10&contact=cont")
-                .content(jsonString).accept(MediaType.APPLICATION_JSON)
+                .content(jsonString)
+                .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -142,5 +145,5 @@ public class CarControllerIntegrationTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-    } */
+    }
 }

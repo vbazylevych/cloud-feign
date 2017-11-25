@@ -73,6 +73,7 @@ public class CarControllerSystemTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
     public void delerteCar() throws Exception {
         String firstCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
         String id = addCarInStore(firstCar);

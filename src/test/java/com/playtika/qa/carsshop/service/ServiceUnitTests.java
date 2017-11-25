@@ -44,12 +44,13 @@ public class ServiceUnitTests {
     }
 
     @Test
-    public void getCarReturnsAppropriateCar() {
+    public void getCarReturnsAppropriateCarInfo() {
         CarInfo expectedResponse = new CarInfo(2, "Sema");
         CarInStore carInStore = new CarInStore(new Car(), expectedResponse);
         CarInStore carInStoreWrong = new CarInStore(new Car(), new CarInfo(10, "kot"));
         carServiceRepository.add(carInStore);
-        assertEquals(Optional.of(expectedResponse), carServiceRepository.get(1));
+
+        assertEquals(expectedResponse, carServiceRepository.get(1).get().getCarInfo());
     }
 
     @Test
