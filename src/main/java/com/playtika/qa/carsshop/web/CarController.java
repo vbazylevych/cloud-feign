@@ -32,7 +32,7 @@ public class CarController {
     }
 
     @GetMapping(value = "/cars/{id}")
-    public CarInfo getCar(@PathVariable(value = "id") long id) throws NotFoundException {
+    public CarInfo getCar(@PathVariable(value = "id") Integer id) throws NotFoundException {
         log.info("get request with id {} received", id);
 
         return service.get(id)

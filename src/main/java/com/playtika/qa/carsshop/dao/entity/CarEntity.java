@@ -13,8 +13,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Table(name = "car")
 public class CarEntity {
-@Id @GeneratedValue(strategy = GenerationType.AUTO)
-private Long id;
+@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+private Integer id;
 
 @Column(unique = true, nullable = false, length = 25)
 private String plate_number;

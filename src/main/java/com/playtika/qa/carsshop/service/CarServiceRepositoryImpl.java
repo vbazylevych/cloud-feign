@@ -1,6 +1,8 @@
 package com.playtika.qa.carsshop.service;
 
+import com.playtika.qa.carsshop.dao.entity.AdsEntity;
 import com.playtika.qa.carsshop.dao.entity.CarEntity;
+import com.playtika.qa.carsshop.dao.entity.DealEntity;
 import com.playtika.qa.carsshop.dao.entity.UserEntity;
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
@@ -11,8 +13,10 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,32 +45,48 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         //  carInStore.getCar().setId(newId);
         //   storedCars.put(newId, carInStore);
         Car newCar = carInStore.getCar();
-        CarEntity newCarEntity = new CarEntity(0L,
+        CarEntity newCarEntity = new CarEntity(0,
                 newCar.getPlate_number(),
                 newCar.getModel(),
                 newCar.getYear(),
                 newCar.getColor());
 
-        UserEntity user = new UserEntity(0L, "Name", "",
+        em.persist(newCarEntity);
+        em.flush();
+        Integer carId = newCarEntity.getId();
+        carInStore.getCar().setId(carId);
+
+        UserEntity newUserEntity = new UserEntity(0, "Name", "",
                 carInStore.getCarInfo().getContact());
 
 
-        em.persist(newCarEntity);
+        em.persist(newUserEntity);
         em.flush();
-        Long id = newCarEntity.getId();
-        carInStore.getCar().setId(id);
+        Integer userId = newUserEntity.getId();
 
-        em.persist(user);
+        AdsEntity newAdsEntity = new AdsEntity(0, newUserEntity, newCarEntity,
+                carInStore.getCarInfo().getPrice(), null);
 
-
-
-
-        log.info("Car with id {} was successfully created", id);
+        em.persist(newAdsEntity);
+        em.flush();
+        Integer ads_id = newUserEntity.getId();
+        //  log.info("Car with id {} was successfully created", id);
         return carInStore;
     }
 
     @Override
-    public Optional<CarInStore> get(long id) {
+    public Optional<CarInStore> get(Integer id) {
+
+        Query query = em.createQuery("select a.price, a.contact from AdsEntity a" +
+                " where a.year=:id and a.deal_id = :deal");
+        query.setParameter("id", id);
+        query.setParameter("deal", null);
+
+
+        List resultList = query.getResultList();
+        Object o = resultList.get(0);
+
+
         return Optional.ofNullable(storedCars.get(id));
     }
 

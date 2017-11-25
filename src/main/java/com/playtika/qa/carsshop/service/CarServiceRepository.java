@@ -9,7 +9,7 @@ public interface CarServiceRepository {
 
     CarInStore add(CarInStore carInStore);
 
-    Optional<CarInStore> get(long id);
+    Optional<CarInStore> get(Integer id);
 
     Collection<CarInStore> getAll();
 
