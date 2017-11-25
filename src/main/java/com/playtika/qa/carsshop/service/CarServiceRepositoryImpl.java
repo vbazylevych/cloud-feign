@@ -7,6 +7,7 @@ import com.playtika.qa.carsshop.dao.entity.UserEntity;
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
 import com.playtika.qa.carsshop.domain.CarInfo;
+import com.playtika.qa.carsshop.web.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         //   storedCars.put(newId, carInStore);
         Car newCar = carInStore.getCar();
         CarEntity newCarEntity = new CarEntity(newCar.getPlate_number(),
-                newCar.getModel(),newCar.getYear(), newCar.getColor());
+                newCar.getModel(), newCar.getYear(), newCar.getColor());
 
         em.persist(newCarEntity);
         em.flush();
@@ -62,7 +63,7 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         em.flush();
         Integer userId = newUserEntity.getId();
 
-        AdsEntity newAdsEntity = new AdsEntity( newUserEntity, newCarEntity,
+        AdsEntity newAdsEntity = new AdsEntity(newUserEntity, newCarEntity,
                 carInStore.getCarInfo().getPrice(), null);
 
         em.persist(newAdsEntity);
@@ -83,16 +84,16 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
         List resultList = query.getResultList();
         Object o = resultList.get(0); */
+
         AdsEntity adsEntity = em.find(AdsEntity.class, id);
 
-        CarEntity car = adsEntity.getCar();
+        CarInStore carInStore = null;
+        if (adsEntity != null) {
+            carInStore = new CarInStore(new Car(),
+                    new CarInfo(adsEntity.getPrice(), adsEntity.getUser().getContact()));
+        }
 
-        CarInStore carInStore = new CarInStore(car, new CarInfo(adsEntity.getPrice(),
-                adsEntity.getUser().getContact()));
-
-
-
-        return Optional.ofNullable(storedCars.get(id));
+        return Optional.ofNullable(carInStore);
     }
 
     @Override
