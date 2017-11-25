@@ -1,8 +1,6 @@
 package com.playtika.qa.carsshop.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import java.util.concurrent.atomic.AtomicLong;
@@ -11,10 +9,13 @@ import java.util.concurrent.atomic.AtomicLong;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Car {
-    private int enginePower;
-    private String color;
-    private String model;
+
     private long id;
+    private String plate_number;
+    private String model;
+    private String color;
+    private int year=1990;
+
 
 
 }

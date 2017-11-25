@@ -1,10 +1,9 @@
 package com.playtika.qa.carsshop.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class CarInfo {
     private final int price;

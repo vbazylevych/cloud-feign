@@ -27,8 +27,8 @@ public class CarController {
         log.info("Create new car request was received");
 
         CarInStore carInStore = new CarInStore(car, new CarInfo(price, contactDetails));
-        return service.add(carInStore)
-                .getCar().getId();
+       return service.add(carInStore).getCar().getId();
+
     }
 
     @GetMapping(value = "/cars/{id}")
