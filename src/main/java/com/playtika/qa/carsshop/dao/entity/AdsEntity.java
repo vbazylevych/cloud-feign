@@ -20,14 +20,15 @@ public class AdsEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @Column(columnDefinition = "BIGINT")
+    private long id;
 
     @ManyToOne
-    @JoinColumn (name = "user_id", nullable = false)
+    @JoinColumn (name = "user_id", nullable = false, columnDefinition = "BIGINT")
     private UserEntity user;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "car_id", nullable = false)
+    @JoinColumn(name = "car_id", nullable = false, columnDefinition = "BIGINT")
     private CarEntity car;
 
     @Column(nullable = false)
@@ -36,7 +37,7 @@ public class AdsEntity {
 
     @OneToMany(orphanRemoval=true, mappedBy = "ads")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "deal_id")
+    @Column(name = "deal_id", columnDefinition = "BIGINT")
     private List<DealEntity> deal;
 
     public AdsEntity(UserEntity user, CarEntity car, Integer price, List<DealEntity> deal) {

@@ -16,7 +16,8 @@ import javax.persistence.*;
 public class CarEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @Column(columnDefinition = "BIGINT")
+    private long id;
 
     @Column(unique = true, nullable = false, length = 25)
     private String plate_number;

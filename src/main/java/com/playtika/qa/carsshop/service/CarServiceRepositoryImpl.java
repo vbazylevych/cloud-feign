@@ -41,9 +41,10 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
     }
 
     @Override
-    public Optional<CarInStore> get(Integer id) {
+    public Optional<CarInStore> get(long id) {
         AdsEntity adsEntity = em.find(AdsEntity.class, id);
         CarInStore carInStore = null;
+
         if (adsEntity != null) {
             carInStore = getCarInStoreFromAds(adsEntity);
         }
@@ -64,21 +65,17 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
     @Transactional
     @Override
-    public Boolean delete(Integer id) {
+    public Boolean delete(long id) {
         CarEntity carEntity = em.find(CarEntity.class, id);
 
         if (carEntity == null) {
-            log.info("Car {} was deleted", id);
             return false;
         } else {
-
             TypedQuery<AdsEntity> query = em.createQuery("from AdsEntity a where a.car=:id", AdsEntity.class);
             query.setParameter("id", carEntity);
             List<AdsEntity> adsList = query.getResultList();
-            adsList.forEach(item->em.remove(item));
-
+            adsList.forEach(item -> em.remove(item));
             em.remove(carEntity);
-
             return true;
         }
     }
@@ -99,7 +96,7 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
         em.persist(newCarEntity);
         em.flush();
-        Integer carId = newCarEntity.getId();
+        long carId = newCarEntity.getId();
         carInStore.getCar().setId(carId);
         return newCarEntity;
     }

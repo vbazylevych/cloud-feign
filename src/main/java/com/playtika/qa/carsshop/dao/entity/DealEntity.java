@@ -3,6 +3,7 @@ package com.playtika.qa.carsshop.dao.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,9 +16,27 @@ import java.util.List;
 public class DealEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @Column(columnDefinition = "BIGINT")
+    private long id;
 
     @ManyToOne(targetEntity = AdsEntity.class)
-    @JoinColumn(name = "ads_id")
+    @JoinColumn(name = "ads_id", columnDefinition = "BIGINT")
     private AdsEntity ads;
+
+    public static enum Status {
+        ACTIVATED, DECLINED, ACCEPTED
+    }
+    @Column(columnDefinition = "ENUM('ACTIVATED', 'DECLINED', 'ACCEPTED')", nullable = false)
+    private Status status;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
+    @Column(nullable = false)
+    @Check(constraints = "price > 0")
+    private int price;
 }
+
+
+

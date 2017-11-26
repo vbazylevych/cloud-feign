@@ -9,9 +9,9 @@ public interface CarServiceRepository {
 
     CarInStore add(CarInStore carInStore);
 
-    Optional<CarInStore> get(Integer id);
+    Optional<CarInStore> get(long id);
 
     Collection<CarInStore> getAll();
 
-    Boolean delete(Integer id);
+    Boolean delete(long id);
 }
