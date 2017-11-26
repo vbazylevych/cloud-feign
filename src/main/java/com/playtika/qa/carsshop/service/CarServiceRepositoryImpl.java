@@ -79,8 +79,6 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
             em.remove(carEntity);
 
-
-
             return true;
         }
     }
