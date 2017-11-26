@@ -71,8 +71,16 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
             log.info("Car {} was deleted", id);
             return false;
         } else {
+
+            TypedQuery<AdsEntity> query = em.createQuery("from AdsEntity a where a.car=:id", AdsEntity.class);
+            query.setParameter("id", carEntity);
+            List<AdsEntity> adsList = query.getResultList();
+            adsList.forEach(item->em.remove(item));
+
             em.remove(carEntity);
-            log.warn("Cant delete car with id {}", id);
+
+
+
             return true;
         }
     }

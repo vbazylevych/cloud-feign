@@ -22,11 +22,11 @@ public class AdsEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn (name = "user_id", nullable = false)
     private UserEntity user;
 
-    @OneToOne()
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "car_id", nullable = false)
     private CarEntity car;
 
@@ -35,6 +35,7 @@ public class AdsEntity {
     private Integer price;
 
     @OneToMany(orphanRemoval=true, mappedBy = "ads")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @Column(name = "deal_id")
     private List<DealEntity> deal;
 
