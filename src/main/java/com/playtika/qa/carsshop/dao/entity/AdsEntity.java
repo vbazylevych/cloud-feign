@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.List;
@@ -20,11 +22,11 @@ public class AdsEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne
+    @JoinColumn (name = "user_id", nullable = false)
     private UserEntity user;
 
-    @ManyToOne
+    @OneToOne()
     @JoinColumn(name = "car_id", nullable = false)
     private CarEntity car;
 
@@ -32,7 +34,7 @@ public class AdsEntity {
     @Check(constraints = "price > 0")
     private Integer price;
 
-    @OneToMany(mappedBy = "ads")
+    @OneToMany(orphanRemoval=true, mappedBy = "ads")
     @Column(name = "deal_id")
     private List<DealEntity> deal;
 

@@ -40,45 +40,42 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         return carInStore;
     }
 
-
     @Override
     public Optional<CarInStore> get(Integer id) {
         AdsEntity adsEntity = em.find(AdsEntity.class, id);
-
         CarInStore carInStore = null;
         if (adsEntity != null) {
             carInStore = getCarInStoreFromAds(adsEntity);
         }
-
         return Optional.ofNullable(carInStore);
     }
 
     @Override
     public Collection<CarInStore> getAll() {
-        log.info("All cars were returned");
-
         TypedQuery<AdsEntity> query = em.createQuery("from AdsEntity", AdsEntity.class);
         List<AdsEntity> adsList = query.getResultList();
 
-        Map<Integer, CarInStore> mapOfStoredCars = adsList.stream()
+        return query.getResultList()
+                .stream()
                 .map(CarServiceRepositoryImpl::getCarInStoreFromAds)
-                .collect(Collectors.toMap(CarInStore::hashCode, Function.identity()));
-
-        return mapOfStoredCars.values();
+                .collect(Collectors.toMap(CarInStore::hashCode, Function.identity()))
+                .values();
     }
 
-
+    @Transactional
     @Override
-    public Boolean delete(long id) {
-        if (storedCars.remove(id) == null) {
+    public Boolean delete(Integer id) {
+        CarEntity carEntity = em.find(CarEntity.class, id);
+
+        if (carEntity == null) {
             log.info("Car {} was deleted", id);
             return false;
         } else {
+            em.remove(carEntity);
             log.warn("Cant delete car with id {}", id);
             return true;
         }
     }
-
 
     private static CarInStore getCarInStoreFromAds(AdsEntity ads) {
         CarEntity carEntity = ads.getCar();
