@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Service
 public class CarServiceRepositoryImpl implements CarServiceRepository {
     private final Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
-    //  private final AtomicLong id = new AtomicLong(0);
     @PersistenceContext
     private EntityManager em;
 
@@ -33,32 +32,14 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
     @Override
     public CarInStore add(CarInStore carInStore) {
 
-        Car newCar = carInStore.getCar();
-        CarEntity newCarEntity = new CarEntity(newCar.getPlate_number(),
-                newCar.getModel(), newCar.getYear(), newCar.getColor());
-
-        em.persist(newCarEntity);
-        em.flush();
-        Integer carId = newCarEntity.getId();
-        carInStore.getCar().setId(carId);
-
-        UserEntity newUserEntity = new UserEntity("Name", "",
-                carInStore.getCarInfo().getContact());
-
-
-        em.persist(newUserEntity);
-        em.flush();
-        Integer userId = newUserEntity.getId();
-
-        AdsEntity newAdsEntity = new AdsEntity(newUserEntity, newCarEntity,
+        AdsEntity newAdsEntity = new AdsEntity(persistAndGetUserEntity(carInStore),
+                persistAndGetCarEntity(carInStore),
                 carInStore.getCarInfo().getPrice(), null);
 
         em.persist(newAdsEntity);
-        em.flush();
-        Integer ads_id = newUserEntity.getId();
-        //  log.info("Car with id {} was successfully created", id);
         return carInStore;
     }
+
 
     @Override
     public Optional<CarInStore> get(Integer id) {
@@ -66,8 +47,7 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
         CarInStore carInStore = null;
         if (adsEntity != null) {
-            carInStore = new CarInStore(new Car(),
-                    new CarInfo(adsEntity.getPrice(), adsEntity.getUser().getContact()));
+            carInStore = getCarInStoreFromAds(adsEntity);
         }
 
         return Optional.ofNullable(carInStore);
@@ -107,5 +87,26 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         CarInfo carInfo = new CarInfo(ads.getPrice(), ads.getUser().getContact());
 
         return new CarInStore(car, carInfo);
+    }
+
+    private CarEntity persistAndGetCarEntity(CarInStore carInStore) {
+        Car newCar = carInStore.getCar();
+        CarEntity newCarEntity = new CarEntity(newCar.getPlate_number(),
+                newCar.getModel(), newCar.getYear(), newCar.getColor());
+
+        em.persist(newCarEntity);
+        em.flush();
+        Integer carId = newCarEntity.getId();
+        carInStore.getCar().setId(carId);
+        return newCarEntity;
+    }
+
+    private UserEntity persistAndGetUserEntity(CarInStore carInStore) {
+        UserEntity newUserEntity = new UserEntity("Name", "",
+                carInStore.getCarInfo().getContact());
+
+        em.persist(newUserEntity);
+        em.flush();
+        return newUserEntity;
     }
 }
