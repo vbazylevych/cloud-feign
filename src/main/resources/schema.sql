@@ -34,7 +34,7 @@ price INT NOT NULL check (price > 0) ,
 deal_id BIGINT ,
 FOREIGN KEY(user_id)  REFERENCES user(ID),
 FOREIGN KEY (deal_id) REFERENCES deal(ID),
-FOREIGN KEY (car_id) REFERENCES car(ID),
+FOREIGN KEY (car_id) REFERENCES car(ID) ON DELETE CASCADE,
 UNIQUE(car_id, deal_id));
 
 ALTER TABLE deal ADD CONSTRAINT ads_id FOREIGN KEY(ads_id) REFERENCES ads(ID);

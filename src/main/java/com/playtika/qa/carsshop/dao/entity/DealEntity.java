@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Check;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Data
@@ -29,7 +28,7 @@ public class DealEntity {
     @Column(columnDefinition = "ENUM('ACTIVATED', 'DECLINED', 'ACCEPTED')", nullable = false)
     private Status status;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 

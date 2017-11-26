@@ -37,7 +37,7 @@ public class CarController {
 
         return service.get(id)
                 .map(CarInStore::getCarInfo)
-                .orElseThrow(() -> new NotFoundException("Car not found"));
+                .orElseThrow(() -> new NotFoundException("Can't find car info"));
     }
 
     @GetMapping("/cars")

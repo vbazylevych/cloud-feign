@@ -19,6 +19,6 @@ public class CarsShopApplication {
     public static void main(String[] args) {
 
         SpringApplication.run(CarsShopApplication.class, args);
-        //docs.jboss.org/hibernate/annotations/reference
+
     }
 }

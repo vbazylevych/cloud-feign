@@ -3,8 +3,12 @@ package com.playtika.qa.carsshop.service;
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
 import com.playtika.qa.carsshop.domain.CarInfo;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -14,8 +18,14 @@ import static org.junit.Assert.*;
 
 
 public class ServiceUnitTests {
-    private CarServiceRepository carServiceRepository = new CarServiceRepositoryImpl();
+    private CarServiceRepository carServiceRepository;
 
+    @Mock
+    private EntityManager em;
+    @Before
+    public void init() {
+        carServiceRepository = new CarServiceRepositoryImpl(em);
+    }
     @Test
     public void addCarsAssignsSequentialId() {
         CarInStore first = new CarInStore(new Car(), new CarInfo(1, ""));

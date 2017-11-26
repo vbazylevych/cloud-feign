@@ -11,11 +11,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Car {
 
     private long id;
-    private String plate_number;
-    private String model;
+    private  String  plate_number;
+    private  String model;
     private String color;
     private int year;
-
-
-
 }
