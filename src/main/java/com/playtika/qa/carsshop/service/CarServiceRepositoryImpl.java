@@ -2,27 +2,22 @@ package com.playtika.qa.carsshop.service;
 
 import com.playtika.qa.carsshop.dao.entity.AdsEntity;
 import com.playtika.qa.carsshop.dao.entity.CarEntity;
-import com.playtika.qa.carsshop.dao.entity.DealEntity;
 import com.playtika.qa.carsshop.dao.entity.UserEntity;
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
 import com.playtika.qa.carsshop.domain.CarInfo;
-import com.playtika.qa.carsshop.web.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Service
@@ -75,16 +70,6 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
     @Override
     public Optional<CarInStore> get(Integer id) {
-
-     /*   Query query = em.createQuery("select a.user, a.price from AdsEntity a" +
-                " where a.id=:id");
-        query.setParameter("id", id);
-        //query.setParameter("deal", null);
-
-
-        List resultList = query.getResultList();
-        Object o = resultList.get(0); */
-
         AdsEntity adsEntity = em.find(AdsEntity.class, id);
 
         CarInStore carInStore = null;
@@ -99,7 +84,23 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
     @Override
     public Collection<CarInStore> getAll() {
         log.info("All cars were returned");
-        return storedCars.values();
+
+        TypedQuery<AdsEntity> query = em.createQuery("from AdsEntity", AdsEntity.class);
+        List<AdsEntity> adsList = query.getResultList();
+
+        Map<Integer, CarInStore> mapOfStoredCars = new ConcurrentHashMap<>();
+        for (AdsEntity ads : adsList) {
+            CarEntity carEntity = ads.getCar();
+            Car car = new Car(carEntity.getId(), carEntity.getPlate_number(),
+                    carEntity.getModel(), carEntity.getColor(), carEntity.getYear());
+            CarInfo carInfo = new CarInfo(ads.getPrice(), ads.getUser().getContact());
+
+            CarInStore carInStore = new CarInStore(car, carInfo);
+            mapOfStoredCars.put(ads.getId(), carInStore);
+        }
+
+
+        return mapOfStoredCars.values();
     }
 
     @Override
