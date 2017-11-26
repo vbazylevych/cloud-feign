@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,17 +32,7 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
     @Transactional
     @Override
     public CarInStore add(CarInStore carInStore) {
-        //  Query query = em.createQuery("select c.id from CarEntity c join c.owner o" +
-        //         "where c.year=2015 and o.name = :name");
 
-        //    query.setParameter("year", 2015);
-        //    carInStore.getCar().setId(id.incrementAndGet());
-        //  List resultList <CarEntity> = query.getResultList();
-        //  resultList.get(0).
-
-        //    long newId = id.incrementAndGet();
-        //  carInStore.getCar().setId(newId);
-        //   storedCars.put(newId, carInStore);
         Car newCar = carInStore.getCar();
         CarEntity newCarEntity = new CarEntity(newCar.getPlate_number(),
                 newCar.getModel(), newCar.getYear(), newCar.getColor());
@@ -88,20 +80,13 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         TypedQuery<AdsEntity> query = em.createQuery("from AdsEntity", AdsEntity.class);
         List<AdsEntity> adsList = query.getResultList();
 
-        Map<Integer, CarInStore> mapOfStoredCars = new ConcurrentHashMap<>();
-        for (AdsEntity ads : adsList) {
-            CarEntity carEntity = ads.getCar();
-            Car car = new Car(carEntity.getId(), carEntity.getPlate_number(),
-                    carEntity.getModel(), carEntity.getColor(), carEntity.getYear());
-            CarInfo carInfo = new CarInfo(ads.getPrice(), ads.getUser().getContact());
-
-            CarInStore carInStore = new CarInStore(car, carInfo);
-            mapOfStoredCars.put(ads.getId(), carInStore);
-        }
-
+        Map<Integer, CarInStore> mapOfStoredCars = adsList.stream()
+                .map(CarServiceRepositoryImpl::getCarInStoreFromAds)
+                .collect(Collectors.toMap(CarInStore::hashCode, Function.identity()));
 
         return mapOfStoredCars.values();
     }
+
 
     @Override
     public Boolean delete(long id) {
@@ -112,5 +97,15 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
             log.warn("Cant delete car with id {}", id);
             return true;
         }
+    }
+
+
+    private static CarInStore getCarInStoreFromAds(AdsEntity ads) {
+        CarEntity carEntity = ads.getCar();
+        Car car = new Car(carEntity.getId(), carEntity.getPlate_number(),
+                carEntity.getModel(), carEntity.getColor(), carEntity.getYear());
+        CarInfo carInfo = new CarInfo(ads.getPrice(), ads.getUser().getContact());
+
+        return new CarInStore(car, carInfo);
     }
 }
