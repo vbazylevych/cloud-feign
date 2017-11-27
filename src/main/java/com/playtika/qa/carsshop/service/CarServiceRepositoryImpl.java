@@ -9,9 +9,7 @@ import com.playtika.qa.carsshop.domain.CarInStore;
 import com.playtika.qa.carsshop.domain.CarInfo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.omg.PortableInterceptor.USER_EXCEPTION;
 import org.springframework.stereotype.Service;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -39,7 +37,9 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         List<CarEntity> carList = query.getResultList();
 
         if (carList.isEmpty()) {
-            persistAdsEntities(carInStore, persistAndGetUserEntity(carInStore), persistAndGetCarEntity(carInStore));
+            CarEntity carEntity = persistAndGetCarEntity(carInStore);
+            persistAdsEntities(carInStore, persistAndGetUserEntity(carInStore), carEntity);
+            carInStore.getCar().setId(carEntity.getId());
         } else {
             TypedQuery<AdsEntity> adsQuery = em.createQuery("from AdsEntity where car=:car and deal_id is null", AdsEntity.class);
             adsQuery.setParameter("car", carList.get(0));
@@ -52,7 +52,6 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
         return carInStore;
     }
-
 
     @Override
     public Optional<CarInStore> get(long id) {
@@ -89,9 +88,9 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
                 .executeUpdate();
 
         if (deletedCount > 0) {
-            return false;
-        } else {
             return true;
+        } else {
+            return false;
         }
     }
 
@@ -108,24 +107,21 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         AdsEntity newAdsEntity = new AdsEntity(user, car,
                 carInStore.getCarInfo().getPrice(), null);
         em.persist(newAdsEntity);
+        em.flush();
     }
 
     private CarEntity persistAndGetCarEntity(CarInStore carInStore) {
         Car newCar = carInStore.getCar();
         CarEntity newCarEntity = new CarEntity(newCar.getPlate_number(),
                 newCar.getModel(), newCar.getYear(), newCar.getColor());
-
         em.persist(newCarEntity);
         em.flush();
-        long carId = newCarEntity.getId();
-        carInStore.getCar().setId(carId);
         return newCarEntity;
     }
 
     private UserEntity persistAndGetUserEntity(CarInStore carInStore) {
         UserEntity newUserEntity = new UserEntity("Name", "",
                 carInStore.getCarInfo().getContact());
-
         em.persist(newUserEntity);
         em.flush();
         return newUserEntity;

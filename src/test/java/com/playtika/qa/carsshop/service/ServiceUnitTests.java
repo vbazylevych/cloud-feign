@@ -5,7 +5,11 @@ import com.playtika.qa.carsshop.domain.CarInStore;
 import com.playtika.qa.carsshop.domain.CarInfo;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,11 +20,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.*;
 
-
+@DataJpaTest
+@RunWith(SpringRunner.class)
 public class ServiceUnitTests {
     private CarServiceRepository carServiceRepository;
-
-    @Mock
+    @Autowired
     private EntityManager em;
     @Before
     public void init() {
@@ -28,8 +32,8 @@ public class ServiceUnitTests {
     }
     @Test
     public void addCarsAssignsSequentialId() {
-        CarInStore first = new CarInStore(new Car(), new CarInfo(1, ""));
-        CarInStore second = new CarInStore(new Car(), new CarInfo(1,""));
+        CarInStore first = new CarInStore(new Car(-1, "1", "", "",2000), new CarInfo(1, ""));
+        CarInStore second = new CarInStore(new Car(-1,"2", "","",2000), new CarInfo(1,""));
         CarInStore firstCarInStore = carServiceRepository.add(first);
         assertEquals(1, firstCarInStore.getCar().getId());
         CarInStore secondCarInStore = carServiceRepository.add(second);
@@ -38,11 +42,12 @@ public class ServiceUnitTests {
 
     @Test
     public void allCarsReturnsCars() {
-        CarInStore first = new CarInStore(new Car(), new CarInfo(1, "Lera"));
-        CarInStore second = new CarInStore(new Car(), new CarInfo(2, "kot"));
+        CarInStore first = new CarInStore(new Car(1, "1", "", "",2000), new CarInfo(1, "с1"));
+        CarInStore second = new CarInStore(new Car(2,"2", "","",2000), new CarInfo(1,"с2"));
         carServiceRepository.add(first);
         carServiceRepository.add(second);
         Collection<CarInStore> allCars = carServiceRepository.getAll();
+
         assertTrue(allCars.contains(first));
         assertTrue(allCars.contains(second));
         assertThat(allCars.size(), is(2));
@@ -56,11 +61,12 @@ public class ServiceUnitTests {
     @Test
     public void getCarReturnsAppropriateCarInfo() {
         CarInfo expectedResponse = new CarInfo(2, "Sema");
-        CarInStore carInStore = new CarInStore(new Car(), expectedResponse);
+        CarInStore carInStore = new CarInStore(new Car(21,"","","",2000), expectedResponse);
         CarInStore carInStoreWrong = new CarInStore(new Car(), new CarInfo(10, "kot"));
         carServiceRepository.add(carInStore);
 
-        assertEquals(expectedResponse, carServiceRepository.get(1).get().getCarInfo());
+        assertEquals(2, carServiceRepository.get(1).get().getCarInfo().getPrice());
+        assertEquals("Sema", carServiceRepository.get(1).get().getCarInfo().getContact());
     }
 
     @Test

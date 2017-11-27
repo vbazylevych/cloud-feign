@@ -8,6 +8,4 @@ import lombok.*;
 public class CarInfo {
     private final int price;
     private final String contact;
-
-
 }

@@ -93,7 +93,7 @@ public class CarControllerIntegrationTest {
     @Test
     public void getAllCarsReturnsOneCar() throws Exception {
         Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
-        storedCars.put(1L, new CarInStore(new Car(10, "red", "opel", "",1),
+        storedCars.put(1L, new CarInStore(new Car(1, "xxx", "opel", "red",2000),
                 new CarInfo(1, "con")));
         when(carServiceRepository.getAll()).thenReturn(storedCars.values());
 
@@ -101,31 +101,32 @@ public class CarControllerIntegrationTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$[0].car.enginePower").value(10))
+                .andExpect(jsonPath("$[0].car.plate_number").value("xxx"))
                 .andExpect(jsonPath("$[0].car.color").value("red"))
                 .andExpect(jsonPath("$[0].car.model").value("opel"))
+                .andExpect(jsonPath("$[0].car.year").value(2000))
                 .andExpect(jsonPath("$[0].car.id").value(1))
                 .andExpect(jsonPath("$[0].carInfo.price").value(1))
                 .andExpect(jsonPath("$[0].carInfo.contact").value("con"));
     }
 
- /*   @Test
+    @Test
     public void getSeveralCars() throws Exception {
         Map<Long, CarInStore> storedCars = new ConcurrentHashMap<>();
-        storedCars.put(1L, new CarInStore(new Car(10, "red", "opel", 1), new CarInfo(1, "con1")));
-        storedCars.put(2L, new CarInStore(new Car(20, "blue", "mazda", 2), new CarInfo(2, "con2")));
-        storedCars.put(3L, new CarInStore(new Car(30, "black", "reno", 3), new CarInfo(3, "con3")));
+        storedCars.put(1L, new CarInStore(new Car(10,"xxx", "opel", "red", 1), new CarInfo(1, "con1")));
+        storedCars.put(2L, new CarInStore(new Car(20, "xxx1","mazda", "blue", 2), new CarInfo(2, "con2")));
+        storedCars.put(3L, new CarInStore(new Car(30, "xxx2","reno", "black", 3), new CarInfo(3, "con3")));
         when(carServiceRepository.getAll()).thenReturn(storedCars.values());
 
         mockMvc.perform(get("/cars")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$[0].car.enginePower").value(10))
+                .andExpect(jsonPath("$[0].car.plate_number").value("xxx"))
                 .andExpect(jsonPath("$[0].carInfo.price").value(1))
                 .andExpect(jsonPath("$[1].carInfo.contact").value("con2"))
                 .andExpect(jsonPath("$[1].car.color").value("blue"))
-                .andExpect(jsonPath("$[2].car.model").value("reno"));
+                .andExpect(jsonPath("$[2].car.year").value(3));
     }
 
     @Test
@@ -145,5 +146,5 @@ public class CarControllerIntegrationTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-    } */
+    }
 }

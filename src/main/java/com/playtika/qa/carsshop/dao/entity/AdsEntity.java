@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "ads")
-    //    uniqueConstraints = {@UniqueConstraint(columnNames={"car_id", "deal_id"})})
 public class AdsEntity {
 
     @Id

@@ -44,13 +44,13 @@ public class CarControllerSystemTest {
 
     @Test
     public void addCar() throws Exception {
-        String firstCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
+        String firstCar = "{\"plate_number\": \"1\", \"color\": \"\", \"model\": \"\", \"year\": 2000 } ";
         addCarInStore(firstCar);
     }
 
     @Test
     public void getCar() throws Exception {
-        String firstCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
+        String firstCar = "{\"plate_number\": \"1\", \"color\": \"\", \"model\": \"\", \"year\": 2000 } ";
         String id = addCarInStore(firstCar);
 
         mockMvc.perform(get("/cars/" + id)
@@ -63,8 +63,8 @@ public class CarControllerSystemTest {
 
     @Test
     public void getAllCars() throws Exception {
-        String firstCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
-        String secondCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
+        String firstCar = "{\"plate_number\": \"3\", \"color\": \"\", \"model\": \"\", \"year\": 2000 } ";
+        String secondCar = "{\"plate_number\": \"4\", \"color\": \"\", \"model\": \"\", \"year\": 2000 } ";
         addCarInStore(firstCar);
         addCarInStore(secondCar);
 
@@ -75,7 +75,7 @@ public class CarControllerSystemTest {
 
     @Test
     public void delerteCar() throws Exception {
-        String firstCar = "{\"enginePower\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 } ";
+        String firstCar = "{\"plate_number\": \"5\", \"color\": \"\", \"model\": \"\", \"year\": 2000 } ";
         String id = addCarInStore(firstCar);
 
         mockMvc.perform(delete("/cars/" + id)
