@@ -140,7 +140,7 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
     private List<AdsEntity> findOpenedAdsByCarId(long id) {
         CarEntity car = em.find(CarEntity.class, id);
-        if (car.equals(null)) {
+        if (car == null){
             return (List<AdsEntity>) EMPTY_LIST;
         }
         return em.createQuery("from AdsEntity where car=:car and deal_id is null", AdsEntity.class)

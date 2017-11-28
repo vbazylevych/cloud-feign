@@ -37,7 +37,7 @@ public class CarControllerIntegrationTest {
 
     @Test
     public void getExistingCar() throws Exception {
-        Optional<CarInStore> response = Optional.of(new CarInStore(new Car(),
+        Optional<CarInStore> response = Optional.of(new CarInStore(new Car("5"),
                                                     new CarInfo(1, "cont")));
         when(carServiceRepository.get(1)).thenReturn(response);
 
@@ -59,18 +59,18 @@ public class CarControllerIntegrationTest {
 
     @Test
     public void addCar() throws Exception {
-        Car car = new Car(1, "", "", "", 1990);
+        Car car = new Car("1");
         CarInStore carInStore = new CarInStore(car, new CarInfo(10, "cont"));
        when(carServiceRepository.add(any())).thenReturn(carInStore);
 
-        String jsonString = "{\"plate_number\": 1, \"color\": \"\", \"model\": \"\", \"id\": 1 ,\"year\": 1990 } ";
+        String jsonString = "{\"plate_number\": 1} ";
         mockMvc.perform(post("/cars?price=10&contact=cont")
                 .content(jsonString)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(content().json("1"));
+                .andExpect(content().json("0"));
     }
 
     @Test

@@ -34,8 +34,8 @@ public class ServiceUnitTests {
 
     @Test
     public void allCarsReturnsCars() {
-        CarInStore first = new CarInStore(new Car(1, "1", "", "", 2000), new CarInfo(1, "с1"));
-        CarInStore second = new CarInStore(new Car(2, "2", "", "", 2000), new CarInfo(1, "с2"));
+        CarInStore first = new CarInStore(new Car("1"), new CarInfo(1, "с1"));
+        CarInStore second = new CarInStore(new Car("2"), new CarInfo(1, "с2"));
         carServiceRepository.add(first);
         carServiceRepository.add(second);
         Collection<CarInStore> allCars = carServiceRepository.getAll();
@@ -50,8 +50,8 @@ public class ServiceUnitTests {
     @Test
     public void getCarReturnsAppropriateCarInfo() {
         CarInfo expectedResponse = new CarInfo(2, "Sema");
-        CarInStore carInStore = new CarInStore(new Car(21, "", "", "", 2000), expectedResponse);
-        CarInStore carInStoreWrong = new CarInStore(new Car(), new CarInfo(10, "kot"));
+        CarInStore carInStore = new CarInStore(new Car("3"), expectedResponse);
+        CarInStore carInStoreWrong = new CarInStore(new Car("3"), new CarInfo(10, "kot"));
         CarInStore addedCar = carServiceRepository.add(carInStore);
 
         assertEquals(2, carServiceRepository.get(addedCar.getCar().getId()).get().getCarInfo().getPrice());
@@ -71,7 +71,7 @@ public class ServiceUnitTests {
 
     @Test
     public void deleteWhenRepositoryHasSeveralItems() {
-        CarInStore first = new CarInStore(new Car(1,"","","",2000), new CarInfo(1, "kot"));
+        CarInStore first = new CarInStore(new Car("4"), new CarInfo(1, "kot"));
         CarInStore addedCar = carServiceRepository.add(first);
         assertTrue(carServiceRepository.delete(addedCar.getCar().getId()));
         assertTrue(carServiceRepository.getAll().isEmpty());
