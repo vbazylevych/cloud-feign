@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Table(name = "car")
 public class CarEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT")
     private long id;
 

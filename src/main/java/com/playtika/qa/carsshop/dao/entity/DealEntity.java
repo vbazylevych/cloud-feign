@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Table(name = "deal")
 public class DealEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT")
     private long id;
 
