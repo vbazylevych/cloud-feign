@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.EMPTY_LIST;
 
@@ -39,14 +40,14 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         if (carEntities.isEmpty()) {
             CarEntity newCarEntity = createAndSaveCarEntity(carInStore);
             UserEntity newUserEntity = createAndSaveUserEntity(carInStore);
-            AdsEntity newAdsEntity = createAndSaveAdsEntities(carInStore, newUserEntity, newCarEntity);
+            createAndSaveAdsEntities(carInStore, newUserEntity, newCarEntity);
             setCarId(newCarEntity, carInStore);
             return carInStore;
         }
         CarEntity foundCar = carEntities.get(0);
         if (findOpenAds(foundCar).isEmpty()) {
             UserEntity newUserEntity = createAndSaveUserEntity(carInStore);
-            AdsEntity newAdsEntity = createAndSaveAdsEntities(carInStore, newUserEntity, foundCar);
+            createAndSaveAdsEntities(carInStore, newUserEntity, foundCar);
             setCarId(foundCar, carInStore);
             return carInStore;
         }
@@ -56,14 +57,11 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
     @Override
     public Optional<CarInStore> get(long id) {
-        CarInStore carInStore = null;
-        List<AdsEntity> adsEList = findOpenedAdsByCarId(id);
 
-        if (adsEList.size() > 0) {
-            AdsEntity adsEntity = adsEList.get(0);
-            carInStore = getCarInStoreFromAds(adsEntity);
-        }
-        return Optional.ofNullable(carInStore);
+        return findOpenedAdsByCarId(id)
+                .stream()
+                .findFirst()
+                .map(CarServiceRepositoryImpl::getCarInStoreFromAds);
     }
 
     @Override
@@ -140,7 +138,7 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
     private List<AdsEntity> findOpenedAdsByCarId(long id) {
         CarEntity car = em.find(CarEntity.class, id);
-        if (car == null){
+        if (car == null) {
             return (List<AdsEntity>) EMPTY_LIST;
         }
         return em.createQuery("from AdsEntity where car=:car and deal_id is null", AdsEntity.class)
