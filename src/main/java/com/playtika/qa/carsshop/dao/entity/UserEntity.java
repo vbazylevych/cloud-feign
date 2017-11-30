@@ -1,15 +1,13 @@
 package com.playtika.qa.carsshop.dao.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Data
-@AllArgsConstructor
+@Setter
+@Getter
 @NoArgsConstructor
 @Table(name = "user")
 public class UserEntity {
@@ -17,7 +15,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT")
-    private long id;
+    private Long id;
 
     @Column(nullable = false, length = 20)
     private String name;

@@ -1,18 +1,17 @@
 package com.playtika.qa.carsshop.dao.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "ads")
 public class AdsEntity {
@@ -20,13 +19,13 @@ public class AdsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT")
-    private long id;
+    private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn (name = "user_id", nullable = false, columnDefinition = "BIGINT")
     private UserEntity user;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "car_id", nullable = false, columnDefinition = "BIGINT")
     private CarEntity car;
 
@@ -34,12 +33,11 @@ public class AdsEntity {
     @Check(constraints = "price > 0")
     private Integer price;
 
-    @OneToMany(orphanRemoval=true, mappedBy = "ads")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "ads", fetch = FetchType.LAZY)
     @Column(name = "deal_id", columnDefinition = "BIGINT")
-    private List<DealEntity> deal;
+    private Set<DealEntity> deal;
 
-    public AdsEntity(UserEntity user, CarEntity car, Integer price, List<DealEntity> deal) {
+    public AdsEntity(UserEntity user, CarEntity car, Integer price, Set<DealEntity> deal) {
         this.user = user;
         this.car = car;
         this.price = price;

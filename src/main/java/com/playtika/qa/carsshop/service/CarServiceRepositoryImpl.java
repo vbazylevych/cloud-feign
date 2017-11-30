@@ -15,12 +15,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Collections.EMPTY_LIST;
 
@@ -38,15 +35,15 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
         List<CarEntity> carEntities = findCarEntities(carInStore);
         if (carEntities.isEmpty()) {
-            CarEntity newCarEntity = createAndSaveCarEntity(carInStore);
-            UserEntity newUserEntity = createAndSaveUserEntity(carInStore);
+            CarEntity newCarEntity = createCarEntity(carInStore);
+            UserEntity newUserEntity = createUserEntity(carInStore);
             createAndSaveAdsEntities(carInStore, newUserEntity, newCarEntity);
             setCarId(newCarEntity, carInStore);
             return carInStore;
         }
         CarEntity foundCar = carEntities.get(0);
         if (findOpenAds(foundCar).isEmpty()) {
-            UserEntity newUserEntity = createAndSaveUserEntity(carInStore);
+            UserEntity newUserEntity = createUserEntity(carInStore);
             createAndSaveAdsEntities(carInStore, newUserEntity, foundCar);
             setCarId(foundCar, carInStore);
             return carInStore;
@@ -61,19 +58,16 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         return findOpenedAdsByCarId(id)
                 .stream()
                 .findFirst()
-                .map(CarServiceRepositoryImpl::getCarInStoreFromAds);
+                .map(this::getCarInStoreFromAds);
     }
 
     @Override
     public Collection<CarInStore> getAll() {
-        TypedQuery<AdsEntity> query = em.createQuery("from AdsEntity where deal_id is null", AdsEntity.class);
-        List<AdsEntity> adsList = query.getResultList();
-
+        TypedQuery<AdsEntity> query = em.createQuery("select a from AdsEntity a where a.deal is empty ", AdsEntity.class);
         return query.getResultList()
                 .stream()
-                .map(CarServiceRepositoryImpl::getCarInStoreFromAds)
-                .collect(Collectors.toMap(CarInStore::hashCode, Function.identity()))
-                .values();
+                .map(this::getCarInStoreFromAds)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Transactional
@@ -88,9 +82,9 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         return false;
     }
 
-    private static CarInStore getCarInStoreFromAds(AdsEntity ads) {
+    private CarInStore getCarInStoreFromAds(AdsEntity ads) {
         CarEntity carEntity = ads.getCar();
-        Car car = new Car(carEntity.getId(), carEntity.getPlate_number(),
+        Car car = new Car(carEntity.getId(), carEntity.getPlateNumber(),
                 carEntity.getModel(), carEntity.getColor(), carEntity.getYear());
         CarInfo carInfo = new CarInfo(ads.getPrice(), ads.getUser().getContact());
         return new CarInStore(car, carInfo);
@@ -100,23 +94,18 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         AdsEntity adsEntity = new AdsEntity(user, car,
                 carInStore.getCarInfo().getPrice(), null);
         em.persist(adsEntity);
-        em.flush();
         return adsEntity;
     }
 
-    private CarEntity createAndSaveCarEntity(CarInStore carInStore) {
+    private CarEntity createCarEntity(CarInStore carInStore) {
         Car newCar = carInStore.getCar();
-        CarEntity carEntity = new CarEntity(newCar.getPlate_number(),
+        CarEntity carEntity = new CarEntity(newCar.getPlateNumber(),
                 newCar.getModel(), newCar.getYear(), newCar.getColor());
-        em.persist(carEntity);
-        em.flush();
         return carEntity;
     }
 
-    private UserEntity createAndSaveUserEntity(CarInStore carInStore) {
+    private UserEntity createUserEntity(CarInStore carInStore) {
         UserEntity userEntity = new UserEntity("Name", "", carInStore.getCarInfo().getContact());
-        em.persist(userEntity);
-        em.flush();
         return userEntity;
     }
 
@@ -126,23 +115,20 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
     private List<CarEntity> findCarEntities(CarInStore carInStore) {
         return em.createQuery("from CarEntity where plate_number=:number ", CarEntity.class)
-                .setParameter("number", carInStore.getCar().getPlate_number())
+                .setParameter("number", carInStore.getCar().getPlateNumber())
                 .getResultList();
     }
 
     private List<AdsEntity> findOpenAds(CarEntity carEntity) {
-        return em.createQuery("from AdsEntity where car=:car and deal_id is null", AdsEntity.class)
+        return em.createQuery("from AdsEntity a  where a.car=:car and a.deal is empty", AdsEntity.class)
                 .setParameter("car", carEntity)
                 .getResultList();
     }
 
     private List<AdsEntity> findOpenedAdsByCarId(long id) {
-        CarEntity car = em.find(CarEntity.class, id);
-        if (car == null) {
-            return (List<AdsEntity>) EMPTY_LIST;
-        }
-        return em.createQuery("from AdsEntity where car=:car and deal_id is null", AdsEntity.class)
-                .setParameter("car", car)
+
+        return em.createQuery("select a from AdsEntity a join a.car c  where c.id=:id and a.deal is empty ", AdsEntity.class)
+                .setParameter("id", id)
                 .getResultList();
     }
 }

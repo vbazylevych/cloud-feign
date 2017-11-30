@@ -1,26 +1,24 @@
 package com.playtika.qa.carsshop.dao.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Check;
 
 import javax.persistence.*;
 
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "car")
 public class CarEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT")
-    private long id;
+    private Long id;
 
-    @Column(unique = true, nullable = false, length = 25)
-    private String plate_number;
+    @Column(name = "plate_number", unique = true, nullable = false, length = 25)
+    private String plateNumber;
 
     @Column(nullable = false, length = 50)
     private String model;
@@ -33,7 +31,7 @@ public class CarEntity {
     private String color;
 
     public CarEntity(String plate_number, String model, int year, String color) {
-        this.plate_number = plate_number;
+        this.plateNumber = plate_number;
         this.model = model;
         this.year = year;
         this.color = color;

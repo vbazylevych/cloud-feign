@@ -2,8 +2,7 @@ package com.playtika.qa.carsshop.domain;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class CarInStore {
     private final Car car;

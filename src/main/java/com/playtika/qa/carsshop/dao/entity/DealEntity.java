@@ -1,22 +1,20 @@
 package com.playtika.qa.carsshop.dao.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Check;
 
 import javax.persistence.*;
 
 @Entity
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "deal")
 public class DealEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT")
-    private long id;
+    private Long id;
 
     @ManyToOne(targetEntity = AdsEntity.class)
     @JoinColumn(name = "ads_id", columnDefinition = "BIGINT")
