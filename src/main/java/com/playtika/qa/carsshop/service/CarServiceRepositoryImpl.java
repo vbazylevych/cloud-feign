@@ -47,9 +47,9 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
             createAndSaveAdsEntities(carInStore, newUserEntity, foundCar);
             setCarId(foundCar, carInStore);
             return carInStore;
+        } else {
+            throw new IllegalArgumentException("Car already selling!");
         }
-        setCarId(foundCar, carInStore);
-        return carInStore;
     }
 
     @Override
