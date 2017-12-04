@@ -126,7 +126,6 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
     }
 
     private List<AdsEntity> findOpenedAdsByCarId(long id) {
-
         return em.createQuery("select a from AdsEntity a join a.car c  where c.id=:id and a.deal is empty ", AdsEntity.class)
                 .setParameter("id", id)
                 .getResultList();
