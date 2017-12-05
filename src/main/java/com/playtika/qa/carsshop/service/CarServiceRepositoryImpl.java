@@ -1,9 +1,7 @@
 package com.playtika.qa.carsshop.service;
 
 
-import com.playtika.qa.carsshop.dao.entity.AdsEntity;
-import com.playtika.qa.carsshop.dao.entity.CarEntity;
-import com.playtika.qa.carsshop.dao.entity.UserEntity;
+import com.playtika.qa.carsshop.dao.entity.*;
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
 import com.playtika.qa.carsshop.domain.CarInfo;
@@ -26,8 +24,8 @@ import static java.util.Collections.EMPTY_LIST;
 @Service
 public class CarServiceRepositoryImpl implements CarServiceRepository {
 
-    @PersistenceContext
-    private EntityManager em;
+    private AdsEntityRepository adsEntityRepository;
+    private CarEntityRepository carEntityRepository;
 
     @Transactional
     @Override
@@ -63,8 +61,7 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
     @Override
     public Collection<CarInStore> getAll() {
-        TypedQuery<AdsEntity> query = em.createQuery("select a from AdsEntity a where a.deal is empty ", AdsEntity.class);
-        return query.getResultList()
+        return adsEntityRepository.findByDealIsNull()
                 .stream()
                 .map(this::getCarInStoreFromAds)
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -72,14 +69,8 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
 
     @Transactional
     @Override
-    public Boolean delete(long id) {
-        int deletedCount = em.createQuery("delete from CarEntity where id=:id")
-                .setParameter("id", id)
-                .executeUpdate();
-        if (deletedCount > 0) {
-            return true;
-        }
-        return false;
+    public void delete(long id) {
+        carEntityRepository.deleteById(id);
     }
 
     private CarInStore getCarInStoreFromAds(AdsEntity ads) {
@@ -93,7 +84,7 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
     private AdsEntity createAndSaveAdsEntities(CarInStore carInStore, UserEntity user, CarEntity car) {
         AdsEntity adsEntity = new AdsEntity(user, car,
                 carInStore.getCarInfo().getPrice(), null);
-        em.persist(adsEntity);
+        adsEntityRepository.save(adsEntity);
         return adsEntity;
     }
 
@@ -114,20 +105,15 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
     }
 
     private List<CarEntity> findCarEntities(CarInStore carInStore) {
-        return em.createQuery("from CarEntity where plate_number=:number ", CarEntity.class)
-                .setParameter("number", carInStore.getCar().getPlateNumber())
-                .getResultList();
+        String plateNumber = carInStore.getCar().getPlateNumber();
+        return carEntityRepository.findByPlateNumber(plateNumber);
     }
 
     private List<AdsEntity> findOpenAds(CarEntity carEntity) {
-        return em.createQuery("from AdsEntity a  where a.car=:car and a.deal is empty", AdsEntity.class)
-                .setParameter("car", carEntity)
-                .getResultList();
+       return adsEntityRepository.findByCarAndDealIsNull(carEntity);
     }
 
     private List<AdsEntity> findOpenedAdsByCarId(long id) {
-        return em.createQuery("select a from AdsEntity a join a.car c  where c.id=:id and a.deal is empty ", AdsEntity.class)
-                .setParameter("id", id)
-                .getResultList();
+        return adsEntityRepository.findOpenedAdsByCarId(id);
     }
 }

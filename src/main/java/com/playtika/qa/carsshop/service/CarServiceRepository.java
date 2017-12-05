@@ -13,5 +13,5 @@ public interface CarServiceRepository {
 
     Collection<CarInStore> getAll();
 
-    Boolean delete(long id);
+    void delete(long id);
 }
