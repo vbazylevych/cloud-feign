@@ -9,15 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static java.util.Collections.EMPTY_LIST;
 
 @Slf4j
 @AllArgsConstructor
@@ -31,7 +25,7 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
     @Override
     public CarInStore add(CarInStore carInStore) {
 
-        List<CarEntity> carEntities = findCarEntities(carInStore);
+        List<CarEntity> carEntities = findCarByPlateNumber(carInStore.getCar().getPlateNumber());
         if (carEntities.isEmpty()) {
             CarEntity newCarEntity = createCarEntity(carInStore);
             UserEntity newUserEntity = createUserEntity(carInStore);
@@ -40,20 +34,18 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
             return carInStore;
         }
         CarEntity foundCar = carEntities.get(0);
-        if (findOpenAds(foundCar).isEmpty()) {
-            UserEntity newUserEntity = createUserEntity(carInStore);
-            createAndSaveAdsEntities(carInStore, newUserEntity, foundCar);
-            setCarId(foundCar, carInStore);
-            return carInStore;
-        } else {
+        if (findOpenAdsByCarId(foundCar.getId()).size() > 0) {
             throw new IllegalArgumentException("Car already selling!");
         }
+        UserEntity newUserEntity = createUserEntity(carInStore);
+        createAndSaveAdsEntities(carInStore, newUserEntity, foundCar);
+        setCarId(foundCar, carInStore);
+        return carInStore;
     }
 
     @Override
     public Optional<CarInStore> get(long id) {
-
-        return findOpenedAdsByCarId(id)
+        return findOpenAdsByCarId(id)
                 .stream()
                 .findFirst()
                 .map(this::getCarInStoreFromAds);
@@ -104,16 +96,15 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
         carInStore.getCar().setId(newCarEntity.getId());
     }
 
-    private List<CarEntity> findCarEntities(CarInStore carInStore) {
-        String plateNumber = carInStore.getCar().getPlateNumber();
+    private List<CarEntity> findCarByPlateNumber(String plateNumber) {
         return carEntityRepository.findByPlateNumber(plateNumber);
     }
 
-    private List<AdsEntity> findOpenAds(CarEntity carEntity) {
-       return adsEntityRepository.findByCarAndDealIsNull(carEntity);
-    }
-
-    private List<AdsEntity> findOpenedAdsByCarId(long id) {
-        return adsEntityRepository.findOpenedAdsByCarId(id);
+    private List<AdsEntity> findOpenAdsByCarId(Long id) {
+        List<CarEntity> carList = carEntityRepository.findById(id);
+        if (carList.isEmpty()){
+            return Collections.emptyList();
+        }
+        return adsEntityRepository.findByCarAndDealIsNull(carList.get(0));
     }
 }
