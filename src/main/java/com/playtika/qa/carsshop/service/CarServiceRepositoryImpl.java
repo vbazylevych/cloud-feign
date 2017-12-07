@@ -62,7 +62,7 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
     @Transactional
     @Override
     public void delete(long id) {
-        carEntityRepository.deleteById(id);
+        carEntityRepository.delete(id);
     }
 
     private CarInStore getCarInStoreFromAds(AdsEntity ads) {
@@ -101,10 +101,6 @@ public class CarServiceRepositoryImpl implements CarServiceRepository {
     }
 
     private List<AdsEntity> findOpenAdsByCarId(Long id) {
-        List<CarEntity> carList = carEntityRepository.findById(id);
-        if (carList.isEmpty()){
-            return Collections.emptyList();
-        }
-        return adsEntityRepository.findByCarAndDealIsNull(carList.get(0));
+        return adsEntityRepository.findByCarIdAndDealIsNull(id);
     }
 }

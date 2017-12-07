@@ -9,5 +9,5 @@ import java.util.List;
 public interface AdsEntityRepository extends JpaRepository<AdsEntity, Long> {
     List<AdsEntity> findByDealIsNull();
 
-    List<AdsEntity> findByCarAndDealIsNull(CarEntity carEntity);
+    List<AdsEntity> findByCarIdAndDealIsNull(long id);
 }
