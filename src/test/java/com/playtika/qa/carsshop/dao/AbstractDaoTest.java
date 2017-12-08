@@ -17,9 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Map;
 import java.util.stream.Stream;
 
-/**
- * @author Alimenkou Mikalai
- */
+
 @RunWith(SpringRunner.class)
 @DataJpaTest
 
@@ -31,6 +29,7 @@ public abstract class AbstractDaoTest<D> {
 
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(() -> jdbcTemplate.getDataSource().getConnection());
+
 
 
     @Autowired

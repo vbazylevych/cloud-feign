@@ -10,4 +10,4 @@ public interface AdsEntityRepository extends JpaRepository<AdsEntity, Long> {
     List<AdsEntity> findByDealIsNull();
 
     List<AdsEntity> findByCarIdAndDealIsNull(long id);
-}
+    }
