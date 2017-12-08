@@ -22,29 +22,12 @@ import java.util.stream.Stream;
 @DataJpaTest
 
 public abstract class AbstractDaoTest<D> {
-    private static long ID = 1;
-
     @Autowired
     protected JdbcTemplate jdbcTemplate;
 
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(() -> jdbcTemplate.getDataSource().getConnection());
 
-
-
-    @Autowired
-    protected TestEntityManager em;
-
     @Autowired
     protected D dao;
-
-
-    protected long addRecordToDatabase(String table, Map<String, Object> fields) {
-        long id = ID++;
-        Object[] params = Stream.concat(Stream.of(id), fields.values().stream()).toArray();
-        jdbcTemplate.update("INSERT INTO " + table +
-                " (id, " + String.join(", ", fields.keySet()) +
-                ") VALUES (?" + StringUtils.repeat(", ?", fields.size()) + ")", params);
-        return id;
-    }
 }

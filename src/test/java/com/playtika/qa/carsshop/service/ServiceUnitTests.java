@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 @DataJpaTest
 @RunWith(SpringRunner.class)
 public class ServiceUnitTests {
- /*   private CarServiceRepository carServiceRepository;
+    private CarServiceRepository carServiceRepository;
     @Autowired
     private EntityManager em;
 
@@ -75,6 +75,6 @@ public class ServiceUnitTests {
         CarInStore addedCar = carServiceRepository.add(first);
         assertTrue(carServiceRepository.delete(addedCar.getCar().getId()));
         assertTrue(carServiceRepository.getAll().isEmpty());
-    } */
+    }
 }
 
