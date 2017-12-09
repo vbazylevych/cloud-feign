@@ -44,7 +44,12 @@ public class AdsRepositoryTest extends AbstractDaoTest<AdsEntityRepository> {
     public void findByCarIdReturnsEmptyListIfTableIsEmpty() {
         assertThat(dao.findByCarIdAndDealIsNull(1), Matchers.is(empty()));
     }
-
+    @Test
+    @DataSet(value = "only-closed-ads-table.xml", disableConstraints = true, useSequenceFiltering = false)
+    @DBUnit(allowEmptyFields = true)
+    public void findByCarIdReturnsEmptyListIfOnlyClosedAds() {
+        assertThat(dao.findByCarIdAndDealIsNull(1), Matchers.is(empty()));
+    }
     @Test
     @DataSet(value = "filled-ads-table.xml", disableConstraints = true, useSequenceFiltering = false)
     @DBUnit(allowEmptyFields = true)

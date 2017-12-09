@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.Collection;
 
 
-public interface CarServiceRepository {
+public interface CarService {
 
     CarInStore add(CarInStore carInStore);
 

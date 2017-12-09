@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @AllArgsConstructor
 @Service
-public class CarServiceRepositoryImpl implements CarServiceRepository {
+public class CarServiceImpl implements CarService {
 
     private AdsEntityRepository adsEntityRepository;
     private CarEntityRepository carEntityRepository;

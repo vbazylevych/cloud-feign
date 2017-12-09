@@ -1,5 +1,6 @@
 package com.playtika.qa.carsshop.service;
 
+import com.playtika.qa.carsshop.dao.entity.*;
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
 import com.playtika.qa.carsshop.domain.CarInfo;
@@ -7,74 +8,98 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@DataJpaTest
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ServiceUnitTests {
-    private CarServiceRepository carServiceRepository;
-    @Autowired
-    private EntityManager em;
+    private CarService carService;
+    @Mock
+    private AdsEntityRepository adsEntityRepository;
+    @Mock
+    private CarEntityRepository carEntityRepository;
+
 
     @Before
     public void init() {
-        carServiceRepository = new CarServiceRepositoryImpl(em);
+        carService = new CarServiceImpl(adsEntityRepository, carEntityRepository);
     }
 
     @Test
-    public void allCarsReturnsCars() {
-        CarInStore first = new CarInStore(new Car("1"), new CarInfo(1, "с1"));
-        CarInStore second = new CarInStore(new Car("2"), new CarInfo(1, "с2"));
-        carServiceRepository.add(first);
-        carServiceRepository.add(second);
-        Collection<CarInStore> allCars = carServiceRepository.getAll();
+    public void allCarsReturnsListOfAdsIfPresent() {
+        CarInStore first = new CarInStore(new Car(1L, "1"), new CarInfo(1, "с1"));
+        CarInStore second = new CarInStore(new Car(2L, "2"), new CarInfo(2, "с2"));
+
+        AdsEntity firstAds = createAdsEntities(first, createUserEntity(first), createCarEntity(first, 1L));
+        AdsEntity secondAds = createAdsEntities(second, createUserEntity(second), createCarEntity(second, 2L));
+
+        List<AdsEntity> result = new ArrayList<>();
+        result.add(firstAds);
+        result.add(secondAds);
+
+        when(adsEntityRepository.findByDealIsNull()).thenReturn(result);
+        Collection<CarInStore> allCars = carService.getAll();
         assertThat(allCars.size(), is(2));
+        assertThat(allCars, hasItem(first));
+        assertThat(allCars, hasItem(second));
     }
 
     @Test
     public void allCarsReturnsEmptyResponseIfRepositoryIsEmpty() {
-        assertThat(carServiceRepository.getAll(), is(empty()));
+        when(adsEntityRepository.findByDealIsNull()).thenReturn(Collections.EMPTY_LIST);
+        assertThat(carService.getAll(), is(empty()));
     }
 
     @Test
     public void getCarReturnsAppropriateCarInfo() {
-        CarInfo expectedResponse = new CarInfo(2, "Sema");
-        CarInStore carInStore = new CarInStore(new Car("3"), expectedResponse);
-        CarInStore carInStoreWrong = new CarInStore(new Car("3"), new CarInfo(10, "kot"));
-        CarInStore addedCar = carServiceRepository.add(carInStore);
+        CarInStore first = new CarInStore(new Car(1L, "1"), new CarInfo(1, "Sema"));
+        AdsEntity firstAds = createAdsEntities(first, createUserEntity(first), createCarEntity(first, 1L));
+        List<AdsEntity> result = new ArrayList<>();
+        result.add(firstAds);
 
-        assertEquals(2, carServiceRepository.get(addedCar.getCar().getId()).get().getCarInfo().getPrice());
-        assertEquals("Sema", carServiceRepository.get(addedCar.getCar().getId()).get().getCarInfo().getContact());
+        when(adsEntityRepository.findByCarIdAndDealIsNull(1)).thenReturn(result);
+
+        assertThat(1, is(carService.get(1).get().getCarInfo().getPrice()));
+        assertThat("Sema", is(carService.get(1).get().getCarInfo().getContact()));
     }
 
     @Test
     public void getCarReturnsEmptyResponseIfCarIsAbsent() {
-        assertFalse(carServiceRepository.get(-10).isPresent());
+        when(adsEntityRepository.findByCarIdAndDealIsNull(1)).thenReturn(Collections.EMPTY_LIST);
+        assertFalse(carService.get(1).isPresent());
     }
 
     @Test
-    public void deleteWhenRepositoryIsEmpty() {
-        assertFalse(carServiceRepository.delete(100500));
-        assertTrue(carServiceRepository.getAll().isEmpty());
+    public void deleteCarCallsDaoDeleteMethod() {
+        carService.delete(1L);
+        verify(carEntityRepository).delete(1L);
     }
 
-    @Test
-    public void deleteWhenRepositoryHasSeveralItems() {
-        CarInStore first = new CarInStore(new Car("4"), new CarInfo(1, "kot"));
-        CarInStore addedCar = carServiceRepository.add(first);
-        assertTrue(carServiceRepository.delete(addedCar.getCar().getId()));
-        assertTrue(carServiceRepository.getAll().isEmpty());
+    private AdsEntity createAdsEntities(CarInStore carInStore, UserEntity user, CarEntity car) {
+        AdsEntity adsEntity = new AdsEntity(user, car,
+                carInStore.getCarInfo().getPrice(), null);
+        return adsEntity;
+    }
+
+    private CarEntity createCarEntity(CarInStore carInStore, Long id) {
+        Car newCar = carInStore.getCar();
+        CarEntity carEntity = new CarEntity(newCar.getPlateNumber(),
+                newCar.getModel(), newCar.getYear(), newCar.getColor());
+        carEntity.setId(id);
+        return carEntity;
+    }
+
+    private UserEntity createUserEntity(CarInStore carInStore) {
+        UserEntity userEntity = new UserEntity("Name", "", carInStore.getCarInfo().getContact());
+        return userEntity;
     }
 }
 

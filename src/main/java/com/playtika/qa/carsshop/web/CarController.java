@@ -3,7 +3,7 @@ package com.playtika.qa.carsshop.web;
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.domain.CarInStore;
 import com.playtika.qa.carsshop.domain.CarInfo;
-import com.playtika.qa.carsshop.service.CarServiceRepository;
+import com.playtika.qa.carsshop.service.CarService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -17,7 +17,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class CarController {
 
-    private final CarServiceRepository service;
+    private final CarService service;
 
 
     @PostMapping(value = "/cars", produces = MediaType.APPLICATION_JSON_VALUE)
