@@ -2,11 +2,16 @@ package com.playtika.qa.carsshop.dao.entity;
 
 import lombok.*;
 import org.hibernate.annotations.Check;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+
+
+import com.couchbase.client.java.repository.annotation.Field;
+import com.couchbase.client.java.repository.annotation.Id;
+
+import com.couchbase.client.java.repository.annotation.Id;
+
 
 import javax.persistence.*;
-import java.util.List;
+
 import java.util.Set;
 
 @Entity

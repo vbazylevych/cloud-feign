@@ -29,8 +29,8 @@ public class CarServiceImpl implements CarService {
         if (carEntities.isEmpty()) {
             CarEntity newCarEntity = createCarEntity(carInStore);
             UserEntity newUserEntity = createUserEntity(carInStore);
-            createAndSaveAdsEntities(carInStore, newUserEntity, newCarEntity);
-            setCarId(newCarEntity, carInStore);
+            AdsEntity newAds = createAndSaveAdsEntities(carInStore, newUserEntity, newCarEntity);
+            setCarId(newAds, carInStore);
             return carInStore;
         }
         CarEntity foundCar = carEntities.get(0);
@@ -38,8 +38,8 @@ public class CarServiceImpl implements CarService {
             throw new IllegalArgumentException("Car already selling!");
         }
         UserEntity newUserEntity = createUserEntity(carInStore);
-        createAndSaveAdsEntities(carInStore, newUserEntity, foundCar);
-        setCarId(foundCar, carInStore);
+        AdsEntity newAds = createAndSaveAdsEntities(carInStore, newUserEntity, foundCar);
+        setCarId(newAds, carInStore);
         return carInStore;
     }
 
@@ -76,8 +76,8 @@ public class CarServiceImpl implements CarService {
     private AdsEntity createAndSaveAdsEntities(CarInStore carInStore, UserEntity user, CarEntity car) {
         AdsEntity adsEntity = new AdsEntity(user, car,
                 carInStore.getCarInfo().getPrice(), null);
-        adsEntityRepository.save(adsEntity);
-        return adsEntity;
+        return adsEntityRepository.save(adsEntity);
+
     }
 
     private CarEntity createCarEntity(CarInStore carInStore) {
@@ -92,8 +92,8 @@ public class CarServiceImpl implements CarService {
         return userEntity;
     }
 
-    private void setCarId(CarEntity newCarEntity, CarInStore carInStore) {
-        carInStore.getCar().setId(newCarEntity.getId());
+    private void setCarId(AdsEntity newAds, CarInStore carInStore) {
+        carInStore.getCar().setId(newAds.getCar().getId());
     }
 
     private List<CarEntity> findCarByPlateNumber(String plateNumber) {

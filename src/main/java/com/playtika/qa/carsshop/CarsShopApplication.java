@@ -10,15 +10,14 @@ import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebClientAutoConfiguration;
 import org.springframework.boot.autoconfigure.websocket.WebSocketAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
 
 
 @SpringBootApplication
-
 public class CarsShopApplication {
 
     public static void main(String[] args) {
 
         SpringApplication.run(CarsShopApplication.class, args);
-
     }
 }

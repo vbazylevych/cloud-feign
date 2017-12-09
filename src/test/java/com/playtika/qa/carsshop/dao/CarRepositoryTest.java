@@ -19,7 +19,7 @@ public class CarRepositoryTest extends AbstractDaoTest<CarEntityRepository> {
 
     @Test
     @DataSet("empty-car.xml")
-    @ExpectedDataSet("filled-car-table.xml")
+    @ExpectedDataSet("inserted-car-table.xml")
     @Commit
     public void carMayBeStored() {
         dao.save(new CarEntity("test", "opel", 2000, "red"));
@@ -35,7 +35,7 @@ public class CarRepositoryTest extends AbstractDaoTest<CarEntityRepository> {
     }
 
     @Test
-    @DataSet("filled-car-table.xml")
+    @DataSet("no-number-car-table.xml")
     public void ifThereIsNoCarWithSuchPlateNumberEmptyListIsReturned() {
         assertThat(dao.findByPlateNumber("xxx"), Matchers.is(empty()));
     }
