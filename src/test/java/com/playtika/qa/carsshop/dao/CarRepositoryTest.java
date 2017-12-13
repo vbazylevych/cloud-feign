@@ -7,7 +7,9 @@ import com.playtika.qa.carsshop.dao.entity.CarEntityRepository;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.test.annotation.Commit;
+
 import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
@@ -18,7 +20,7 @@ public class CarRepositoryTest extends AbstractDaoTest<CarEntityRepository> {
 
 
     @Test
-    @DataSet("empty-car.xml")
+    @DataSet(value = "empty-car.xml", disableConstraints = true, useSequenceFiltering = false)
     @ExpectedDataSet("inserted-car-table.xml")
     @Commit
     public void carMayBeStored() {
@@ -26,7 +28,7 @@ public class CarRepositoryTest extends AbstractDaoTest<CarEntityRepository> {
     }
 
     @Test
-    @DataSet("filled-car-table.xml")
+    @DataSet(value = "filled-car-table.xml", disableConstraints = true, useSequenceFiltering = false)
     public void findByPlatNumberReturnsCarIfPresent() {
         List<CarEntity> result = dao.findByPlateNumber("test");
         CarEntity expectedResult = new CarEntity("test", "opel", 2000, "red");
@@ -35,13 +37,13 @@ public class CarRepositoryTest extends AbstractDaoTest<CarEntityRepository> {
     }
 
     @Test
-    @DataSet("no-number-car-table.xml")
+    @DataSet(value = "no-number-car-table.xml", disableConstraints = true, useSequenceFiltering = false)
     public void ifThereIsNoCarWithSuchPlateNumberEmptyListIsReturned() {
         assertThat(dao.findByPlateNumber("xxx"), Matchers.is(empty()));
     }
 
     @Test
-    @DataSet("filled-car-table.xml")
+    @DataSet(value = "filled-car-table.xml", disableConstraints = true, useSequenceFiltering = false)
     public void deleteCar() {
         dao.delete(1L);
         assertThat(dao.findAll(), Matchers.is(empty()));
