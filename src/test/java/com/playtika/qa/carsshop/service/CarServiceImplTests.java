@@ -7,6 +7,7 @@ import com.playtika.qa.carsshop.domain.CarInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -20,18 +21,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ServiceUnitTests {
-    private CarService carService;
+public class CarServiceImplTests {
+
+   @InjectMocks
+    private CarServiceImpl carServiceImpl;
     @Mock
     private AdsEntityRepository adsEntityRepository;
     @Mock
     private CarEntityRepository carEntityRepository;
-
-
-    @Before
-    public void init() {
-        carService = new CarServiceImpl(adsEntityRepository, carEntityRepository);
-    }
 
     @Test
     public void addNewAdsThenCarIsAbsent() {
@@ -42,7 +39,7 @@ public class ServiceUnitTests {
 
         when(carEntityRepository.findByPlateNumber("xxx")).thenReturn(Collections.EMPTY_LIST);
         when(adsEntityRepository.save(notNull(AdsEntity.class))).thenReturn(firstAds);
-        CarInStore resalt = carService.add(first);
+        CarInStore resalt = carServiceImpl.add(first);
 
         assertThat(resalt.getCar().getPlateNumber(), is("xxx"));
         assertThat(resalt.getCarInfo().getPrice(), is(1));
@@ -62,7 +59,7 @@ public class ServiceUnitTests {
         when(adsEntityRepository.findByCarIdAndDealIsNull(1L)).thenReturn(Collections.EMPTY_LIST);
 
         when(adsEntityRepository.save(notNull(AdsEntity.class))).thenReturn(firstAds);
-        CarInStore resalt = carService.add(first);
+        CarInStore resalt = carServiceImpl.add(first);
 
         assertThat(resalt.getCar().getPlateNumber(), is("xxx"));
         assertThat(resalt.getCarInfo().getPrice(), is(1));
@@ -83,7 +80,7 @@ public class ServiceUnitTests {
         when(adsEntityRepository.findByCarIdAndDealIsNull(1L)).thenReturn(adsList);
 
         when(adsEntityRepository.save(notNull(AdsEntity.class))).thenReturn(firstAds);
-        CarInStore resalt = carService.add(first);
+        CarInStore resalt = carServiceImpl.add(first);
     }
     @Test
     public void allCarsReturnsListOfAdsIfPresent() {
@@ -98,7 +95,7 @@ public class ServiceUnitTests {
         result.add(secondAds);
 
         when(adsEntityRepository.findByDealIsNull()).thenReturn(result);
-        Collection<CarInStore> allCars = carService.getAll();
+        Collection<CarInStore> allCars = carServiceImpl.getAll();
         assertThat(allCars.size(), is(2));
         assertThat(allCars, hasItem(first));
         assertThat(allCars, hasItem(second));
@@ -107,7 +104,7 @@ public class ServiceUnitTests {
     @Test
     public void allCarsReturnsEmptyResponseIfRepositoryIsEmpty() {
         when(adsEntityRepository.findByDealIsNull()).thenReturn(Collections.EMPTY_LIST);
-        assertThat(carService.getAll(), is(empty()));
+        assertThat(carServiceImpl.getAll(), is(empty()));
     }
 
     @Test
@@ -119,19 +116,19 @@ public class ServiceUnitTests {
 
         when(adsEntityRepository.findByCarIdAndDealIsNull(1)).thenReturn(result);
 
-        assertThat(1, is(carService.get(1).get().getCarInfo().getPrice()));
-        assertThat("Sema", is(carService.get(1).get().getCarInfo().getContact()));
+        assertThat(1, is(carServiceImpl.get(1).get().getCarInfo().getPrice()));
+        assertThat("Sema", is(carServiceImpl.get(1).get().getCarInfo().getContact()));
     }
 
     @Test
     public void getCarReturnsEmptyResponseIfCarIsAbsent() {
         when(adsEntityRepository.findByCarIdAndDealIsNull(1)).thenReturn(Collections.EMPTY_LIST);
-        assertFalse(carService.get(1).isPresent());
+        assertFalse(carServiceImpl.get(1).isPresent());
     }
 
     @Test
     public void deleteCarCallsDaoDeleteMethod() {
-        carService.delete(1L);
+        carServiceImpl.delete(1L);
         verify(carEntityRepository).delete(1L);
     }
 
