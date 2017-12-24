@@ -19,4 +19,5 @@ public class RegistrationController {
     public List<Long> processFile(@RequestParam("url") String url) throws Exception {
         return service.processFileAndRegisterCar(Paths.get(url));
     }
+
 }

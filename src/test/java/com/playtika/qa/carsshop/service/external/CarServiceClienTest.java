@@ -3,9 +3,7 @@ package com.playtika.qa.carsshop.service.external;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.playtika.qa.carsshop.domain.Car;
-import com.playtika.qa.carsshop.service.external.CarServiceClient;
 import lombok.extern.slf4j.Slf4j;
-import org.hamcrest.CoreMatchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,10 +26,10 @@ public class CarServiceClienTest {
     private CarServiceClient service;
 
     @Rule
-    public WireMockRule wm = new WireMockRule(options().port(8090));
+    public WireMockRule wm = new WireMockRule(options().port(8080));
 
     @Test
-    public void registration_successfull() {
+    public void registration_successful() {
         String jsonCar = "{\"plateNumber\": \"xxx\", \"color\": \"red\", \"model\": \"opel\", \"year\": 2010 } ";
         Car car = Car.builder()
                 .color("red")
@@ -46,9 +44,10 @@ public class CarServiceClienTest {
                 .willReturn(ok("1")));
         assertThat(service.createCar(2, "2", car), is(1L));
     }
-    @Test
-    public void registration_throws_CarAlreadyExistException() {
-        String jsonCar = "{\"plateNumber\": \"xxx\", \"color\": \"red\", \"model\": \"opel\", \"year\": 2010 } ";
+
+    @Test(expected = feign.FeignException.class)
+    public void registration_throws_Exception() {
+
         Car car = Car.builder()
                 .color("red")
                 .model("opel")
@@ -58,9 +57,9 @@ public class CarServiceClienTest {
 
         stubFor(post("/cars?price=2&contact=2")
                 .withHeader("Content-Type", equalTo("application/json"))
-                .withRequestBody(equalToJson(jsonCar))
-                .willReturn(ok("1")));
-        assertThat(service.createCar(2, "2", car), is(1L));
+                .willReturn(aResponse().withStatus(500)));
+
+        service.createCar(2, "2", car);
     }
 }
 

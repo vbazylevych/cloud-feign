@@ -8,7 +8,6 @@ import com.playtika.qa.carsshop.domain.CarInStope;
 import com.playtika.qa.carsshop.domain.Car;
 
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
