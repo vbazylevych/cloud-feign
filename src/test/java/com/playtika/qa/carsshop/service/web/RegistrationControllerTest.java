@@ -35,8 +35,7 @@ public class RegistrationControllerTest {
     @Test
     public void processFile_WithExistingFile_successful() throws Exception {
 
-        Path path = Paths.get("test.csv");
-        when(service.processFileAndRegisterCar(path)).thenReturn(asList(1L));
+        when(service.processFileAndRegisterCar("test.csv")).thenReturn(asList(1L));
 
         mockMvc.perform(post("/?url=test.csv")
                 .accept(MediaType.APPLICATION_JSON))

@@ -1,6 +1,5 @@
 package com.playtika.qa.carsshop.service;
 
-import com.playtika.qa.carsshop.service.external.CarServiceClient;
 import com.playtika.qa.carsshop.service.external.CarServiceClientImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +9,9 @@ import com.playtika.qa.carsshop.domain.Car;
 
 
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,12 +24,19 @@ public class RegistrationService {
 
     CarServiceClientImpl carServiceClient;
 
-    public List<Long> processFileAndRegisterCar(Path path) throws Exception {
+    public List<Long> processFileAndRegisterCar(String url) throws Exception {
         List listOfCarId = new ArrayList<>();
-
-        Files.lines(path)
-                .map(this::lineToCarInStore)
-                .forEach(carInStope -> register(carInStope, listOfCarId));
+        try {
+            Files.lines(Paths.get(url))
+                    .map(this::lineToCarInStore)
+                    .forEach(carInStope -> register(carInStope, listOfCarId));
+        } catch (NoSuchFileException e) {
+            throw new NotFoundException("File " + e.getMessage() + " not found");
+        } catch (java.lang.NumberFormatException e) {
+            throw new CorruptedFileException(e.getMessage());
+        } catch (IndexOutOfBoundsException e) {
+            throw new CorruptedFileException("not all mandatory fields present in the file");
+        }
 
         return listOfCarId;
     }

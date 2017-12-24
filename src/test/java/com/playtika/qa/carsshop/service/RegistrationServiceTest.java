@@ -41,26 +41,24 @@ public class RegistrationServiceTest {
                 .year(2018)
                 .build();
 
-        Path path = Paths.get("test.csv");
-
         when(carServiceClient.createCar(1000, "kot", firstCar)).thenReturn(1L);
         when(carServiceClient.createCar(1002, "kot2", secondCar)).thenReturn(2L);
 
-        registrationService.processFileAndRegisterCar(path);
+        registrationService.processFileAndRegisterCar("test.csv");
 
-        assertThat(registrationService.processFileAndRegisterCar(path), CoreMatchers.is(asList(1L, 2L)));
+        assertThat(registrationService.processFileAndRegisterCar("test.csv"), CoreMatchers.is(asList(1L, 2L)));
 
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void registration_emptyFile_successful() throws Exception {
         Path path = Paths.get("empty.csv");
-        registrationService.processFileAndRegisterCar(path);
+        registrationService.processFileAndRegisterCar("empty.csv");
     }
     @Test(expected = NumberFormatException.class)
     public void registration_corruptedFile_successful() throws Exception {
         Path path = Paths.get("corrupted.csv");
-        registrationService.processFileAndRegisterCar(path);
+        registrationService.processFileAndRegisterCar("empty.csv");
     }
 
 }
