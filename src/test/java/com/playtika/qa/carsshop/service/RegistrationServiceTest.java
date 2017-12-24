@@ -2,6 +2,7 @@ package com.playtika.qa.carsshop.service;
 
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.service.external.CarServiceClient;
+import com.playtika.qa.carsshop.service.external.CarServiceClientImpl;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +24,7 @@ public class RegistrationServiceTest {
     @InjectMocks
     RegistrationService registrationService;
     @Mock
-    CarServiceClient carServiceClient;
+    CarServiceClientImpl carServiceClient;
 
     @Test
     public void registration_multiLinesFile_successful() throws Exception {
@@ -50,15 +51,19 @@ public class RegistrationServiceTest {
 
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void registration_emptyFile_successful() throws Exception {
+    @Test(expected = CorruptedFileException.class)
+    public void registration_emptyFile_throwsCorruptedFileException() throws Exception {
         Path path = Paths.get("empty.csv");
         registrationService.processFileAndRegisterCar("empty.csv");
     }
-    @Test(expected = NumberFormatException.class)
-    public void registration_corruptedFile_successful() throws Exception {
+    @Test(expected = CorruptedFileException.class)
+    public void registration_corruptedFile_throwsCorruptedFileException() throws Exception {
+        registrationService.processFileAndRegisterCar("corrupted.csv");
+    }
+    @Test(expected = NotFoundException.class)
+    public void registration_notFoundFile_throwsNotFoundException() throws Exception {
         Path path = Paths.get("corrupted.csv");
-        registrationService.processFileAndRegisterCar("empty.csv");
+        registrationService.processFileAndRegisterCar("bla.csv");
     }
 
 }

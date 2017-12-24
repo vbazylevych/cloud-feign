@@ -1,5 +1,7 @@
 package com.playtika.qa.carsshop.service.web;
 
+import com.playtika.qa.carsshop.service.CorruptedFileException;
+import com.playtika.qa.carsshop.service.NotFoundException;
 import com.playtika.qa.carsshop.service.RegistrationService;
 import com.playtika.qa.carsshop.web.RegistrationController;
 import org.junit.Test;
@@ -11,12 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static com.google.common.primitives.Longs.asList;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,5 +41,35 @@ public class RegistrationControllerTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$[0]").value(1));
 
+    }
+
+    @Test
+    public void processFile_emptyFile_returnNotAcceptableStatus() throws Exception {
+
+        when(service.processFileAndRegisterCar("test.csv")).thenThrow(CorruptedFileException.class);
+
+        mockMvc.perform(post("/?url=test.csv")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotAcceptable());
+    }
+
+    @Test
+    public void processFile_corruptedFile_returnNotAcceptableStatus() throws Exception {
+
+        when(service.processFileAndRegisterCar("test.csv")).thenThrow(CorruptedFileException.class);
+
+        mockMvc.perform(post("/?url=test.csv")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotAcceptable());
+    }
+
+    @Test
+    public void processFile_noFile_returnNotFoundStatus() throws Exception {
+
+        when(service.processFileAndRegisterCar("test.csv")).thenThrow(NotFoundException.class);
+
+        mockMvc.perform(post("/?url=test.csv")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }
