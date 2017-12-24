@@ -20,10 +20,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
-public class CarServiceClienTest {
+public class CarServiceClienImplTest {
 
     @Autowired
-    private CarServiceClient service;
+    private CarServiceClientImpl service;
 
     @Rule
     public WireMockRule wm = new WireMockRule(options().port(8080));
@@ -45,7 +45,7 @@ public class CarServiceClienTest {
         assertThat(service.createCar(2, "2", car), is(1L));
     }
 
-    @Test(expected = feign.FeignException.class)
+    @Test(expected = AlreadyReportedException.class)
     public void registration_throws_Exception() {
 
         Car car = Car.builder()
@@ -57,7 +57,7 @@ public class CarServiceClienTest {
 
         stubFor(post("/cars?price=2&contact=2")
                 .withHeader("Content-Type", equalTo("application/json"))
-                .willReturn(aResponse().withStatus(500)));
+                .willReturn(aResponse().withStatus(500).withBody("Car already selling!")));
 
         service.createCar(2, "2", car);
     }

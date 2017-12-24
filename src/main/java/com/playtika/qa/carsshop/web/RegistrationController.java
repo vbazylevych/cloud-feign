@@ -1,6 +1,6 @@
 package com.playtika.qa.carsshop.web;
 
-import com.playtika.qa.carsshop.service.RegistratonService;
+import com.playtika.qa.carsshop.service.RegistrationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class RegistrationController {
 
-    private final RegistratonService service;
+    private final RegistrationService service;
 
     @PostMapping
     public List<Long> processFile(@RequestParam("url") String url) throws Exception {

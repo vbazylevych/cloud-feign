@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class RegistrationServiceTest {
 
     @InjectMocks
-    RegistratonService registratonService;
+    RegistrationService registrationService;
     @Mock
     CarServiceClient carServiceClient;
 
@@ -46,21 +46,21 @@ public class RegistrationServiceTest {
         when(carServiceClient.createCar(1000, "kot", firstCar)).thenReturn(1L);
         when(carServiceClient.createCar(1002, "kot2", secondCar)).thenReturn(2L);
 
-        registratonService.processFileAndRegisterCar(path);
+        registrationService.processFileAndRegisterCar(path);
 
-        assertThat(registratonService.processFileAndRegisterCar(path), CoreMatchers.is(asList(1L, 2L)));
+        assertThat(registrationService.processFileAndRegisterCar(path), CoreMatchers.is(asList(1L, 2L)));
 
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void registration_emptyFile_successful() throws Exception {
         Path path = Paths.get("empty.csv");
-        registratonService.processFileAndRegisterCar(path);
+        registrationService.processFileAndRegisterCar(path);
     }
     @Test(expected = NumberFormatException.class)
     public void registration_corruptedFile_successful() throws Exception {
         Path path = Paths.get("corrupted.csv");
-        registratonService.processFileAndRegisterCar(path);
+        registrationService.processFileAndRegisterCar(path);
     }
 
 }

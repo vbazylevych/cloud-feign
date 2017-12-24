@@ -1,6 +1,6 @@
 package com.playtika.qa.carsshop.service.web;
 
-import com.playtika.qa.carsshop.service.RegistratonService;
+import com.playtika.qa.carsshop.service.RegistrationService;
 import com.playtika.qa.carsshop.web.RegistrationController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 
 import static com.google.common.primitives.Longs.asList;
 import static org.mockito.Mockito.when;
@@ -31,7 +30,7 @@ public class RegistrationControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private RegistratonService service;
+    private RegistrationService service;
 
     @Test
     public void processFile_WithExistingFile_successful() throws Exception {

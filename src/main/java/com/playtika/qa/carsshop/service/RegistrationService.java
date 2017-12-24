@@ -1,6 +1,7 @@
 package com.playtika.qa.carsshop.service;
 
 import com.playtika.qa.carsshop.service.external.CarServiceClient;
+import com.playtika.qa.carsshop.service.external.CarServiceClientImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,9 @@ import java.util.stream.Stream;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class RegistratonService {
+public class RegistrationService {
 
-    CarServiceClient carServiceClient;
+    CarServiceClientImpl carServiceClient;
 
     public List<Long> processFileAndRegisterCar(Path path) throws Exception {
         List listOfCarId = new ArrayList<>();
