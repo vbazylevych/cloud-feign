@@ -32,7 +32,6 @@ public class RegistrationControllerTest {
 
     @Test
     public void processFile_WithExistingFile_successful() throws Exception {
-
         when(service.processFileAndRegisterCar("test.csv")).thenReturn(asList(1L));
 
         mockMvc.perform(post("/?url=test.csv")
@@ -45,7 +44,6 @@ public class RegistrationControllerTest {
 
     @Test
     public void processFile_emptyFile_returnNotAcceptableStatus() throws Exception {
-
         when(service.processFileAndRegisterCar("test.csv")).thenThrow(CorruptedFileException.class);
 
         mockMvc.perform(post("/?url=test.csv")
@@ -55,7 +53,6 @@ public class RegistrationControllerTest {
 
     @Test
     public void processFile_corruptedFile_returnNotAcceptableStatus() throws Exception {
-
         when(service.processFileAndRegisterCar("test.csv")).thenThrow(CorruptedFileException.class);
 
         mockMvc.perform(post("/?url=test.csv")
@@ -65,7 +62,6 @@ public class RegistrationControllerTest {
 
     @Test
     public void processFile_noFile_returnNotFoundStatus() throws Exception {
-
         when(service.processFileAndRegisterCar("test.csv")).thenThrow(NotFoundException.class);
 
         mockMvc.perform(post("/?url=test.csv")

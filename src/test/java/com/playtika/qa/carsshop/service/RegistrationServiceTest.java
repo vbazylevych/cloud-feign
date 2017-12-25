@@ -46,7 +46,6 @@ public class RegistrationServiceTest {
         when(carServiceClient.createCar(1002, "kot2", secondCar)).thenReturn(2L);
 
         registrationService.processFileAndRegisterCar("test.csv");
-
         assertThat(registrationService.processFileAndRegisterCar("test.csv"), CoreMatchers.is(asList(1L, 2L)));
 
     }
@@ -56,10 +55,12 @@ public class RegistrationServiceTest {
         Path path = Paths.get("empty.csv");
         registrationService.processFileAndRegisterCar("empty.csv");
     }
+
     @Test(expected = CorruptedFileException.class)
     public void registration_corruptedFile_throwsCorruptedFileException() throws Exception {
         registrationService.processFileAndRegisterCar("corrupted.csv");
     }
+
     @Test(expected = NotFoundException.class)
     public void registration_notFoundFile_throwsNotFoundException() throws Exception {
         Path path = Paths.get("corrupted.csv");

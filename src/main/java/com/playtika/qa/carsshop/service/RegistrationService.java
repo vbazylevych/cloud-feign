@@ -37,7 +37,6 @@ public class RegistrationService {
         } catch (IndexOutOfBoundsException e) {
             throw new CorruptedFileException("not all mandatory fields present in the file");
         }
-
         return listOfCarId;
     }
 

@@ -45,9 +45,8 @@ public class CarServiceClienImplTest {
         assertThat(service.createCar(2, "2", car), is(1L));
     }
 
-    @Test(expected = AlreadyReportedException.class)
+    @Test
     public void registration_throws_Exception() {
-
         Car car = Car.builder()
                 .color("red")
                 .model("opel")
@@ -57,9 +56,9 @@ public class CarServiceClienImplTest {
 
         stubFor(post("/cars?price=2&contact=2")
                 .withHeader("Content-Type", equalTo("application/json"))
-                .willReturn(aResponse().withStatus(500).withBody("Car already selling!")));
+                .willReturn(aResponse().withStatus(500)));
 
-        service.createCar(2, "2", car);
+        assertThat(service.createCar(2, "2", car),is(-1));
     }
 }
 

@@ -2,12 +2,14 @@ package com.playtika.qa.carsshop.service.external;
 
 import com.playtika.qa.carsshop.domain.Car;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class CarServiceClientImpl implements CarServiceClient {
 
     CarServiceClient carServiceClient;
@@ -18,9 +20,7 @@ public class CarServiceClientImpl implements CarServiceClient {
         try {
             carId = carServiceClient.createCar(price, contactDetails, car);
         } catch (feign.FeignException e) {
-            if (e.getLocalizedMessage().contains("Car already selling!")) {
-                throw new AlreadyReportedException("Car with plat number " + car.getPlateNumber() + " already selling!");
-            }
+            log.error("vse ploxo" + e.getLocalizedMessage());
         }
         return carId;
     }
