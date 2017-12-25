@@ -9,13 +9,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.hamcrest.CoreMatchers.*;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.when;
 
@@ -46,12 +43,11 @@ public class RegistrationServiceTest {
         when(carServiceClient.createCar(1000, "kot", firstCar)).thenReturn(1L);
         when(carServiceClient.createCar(1002, "kot2", secondCar)).thenReturn(2L);
 
-        assertThat(registrationService.processFileAndRegisterCar("src/test/resources/test.csv"), CoreMatchers.is(asList(1L, 2L)));
+        assertThat(registrationService.processFileAndRegisterCar("src/test/resources/test.csv"), is(asList(1L, 2L)));
     }
 
     @Test(expected = CorruptedFileException.class)
     public void registration_emptyFile_throwsCorruptedFileException() throws Exception {
-        Path path = Paths.get("empty.csv");
         registrationService.processFileAndRegisterCar("src/test/resources/empty.csv");
     }
 

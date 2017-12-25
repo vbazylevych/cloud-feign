@@ -39,7 +39,6 @@ public class RegistrationControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$[0]").value(1));
-
     }
 
     @Test

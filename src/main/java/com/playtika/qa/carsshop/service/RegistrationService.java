@@ -36,7 +36,7 @@ public class RegistrationService {
         } catch (java.lang.NumberFormatException e) {
             throw new CorruptedFileException(e.getMessage());
         } catch (IndexOutOfBoundsException e) {
-            throw new CorruptedFileException("not all mandatory fields present in the file");
+            throw new CorruptedFileException("Not all mandatory fields present in the file");
         }
         return listOfCarId;
     }

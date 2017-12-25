@@ -9,7 +9,6 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class CarServiceClientImpl implements CarServiceClient {
 
     CarServiceClient carServiceClient;
