@@ -46,7 +46,7 @@ public class CarServiceClienImplTest {
     }
 
     @Test
-    public void registration_throws_Exception() {
+    public void registration_whenCarAlreadyExist_returnsNegativeId() {
         Car car = Car.builder()
                 .color("red")
                 .model("opel")
