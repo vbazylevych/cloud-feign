@@ -47,7 +47,6 @@ public class RegistrationServiceTest {
 
         registrationService.processFileAndRegisterCar("test.csv");
         assertThat(registrationService.processFileAndRegisterCar("test.csv"), CoreMatchers.is(asList(1L, 2L)));
-
     }
 
     @Test(expected = CorruptedFileException.class)
