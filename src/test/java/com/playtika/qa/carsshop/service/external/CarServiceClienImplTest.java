@@ -56,9 +56,9 @@ public class CarServiceClienImplTest {
 
         stubFor(post("/cars?price=2&contact=2")
                 .withHeader("Content-Type", equalTo("application/json"))
-                .willReturn(aResponse().withStatus(500)));
+                .willReturn(aResponse().withStatus(500).withBody("Car already selling!")));
 
-        assertThat(service.createCar(2, "2", car),is(-1));
+        assertThat(service.createCar(2, "2", car), is(-1));
     }
 }
 

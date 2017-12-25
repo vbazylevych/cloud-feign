@@ -1,7 +1,7 @@
 package com.playtika.qa.carsshop.service.web;
 
-import com.playtika.qa.carsshop.service.CorruptedFileException;
-import com.playtika.qa.carsshop.service.NotFoundException;
+import com.playtika.qa.carsshop.service.exception.CorruptedFileException;
+import com.playtika.qa.carsshop.service.exception.NotFoundException;
 import com.playtika.qa.carsshop.service.RegistrationService;
 import com.playtika.qa.carsshop.web.RegistrationController;
 import org.junit.Test;

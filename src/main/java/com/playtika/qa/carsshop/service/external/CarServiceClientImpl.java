@@ -20,7 +20,9 @@ public class CarServiceClientImpl implements CarServiceClient {
         try {
             carId = carServiceClient.createCar(price, contactDetails, car);
         } catch (feign.FeignException e) {
-            log.error("vse ploxo" + e.getLocalizedMessage());
+            if (e.getMessage().contains("Car already selling!")) {
+                return carId;
+            } else throw e;
         }
         return carId;
     }

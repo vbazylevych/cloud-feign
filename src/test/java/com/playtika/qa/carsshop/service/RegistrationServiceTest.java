@@ -1,7 +1,8 @@
 package com.playtika.qa.carsshop.service;
 
 import com.playtika.qa.carsshop.domain.Car;
-import com.playtika.qa.carsshop.service.external.CarServiceClient;
+import com.playtika.qa.carsshop.service.exception.CorruptedFileException;
+import com.playtika.qa.carsshop.service.exception.NotFoundException;
 import com.playtika.qa.carsshop.service.external.CarServiceClientImpl;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -45,24 +46,22 @@ public class RegistrationServiceTest {
         when(carServiceClient.createCar(1000, "kot", firstCar)).thenReturn(1L);
         when(carServiceClient.createCar(1002, "kot2", secondCar)).thenReturn(2L);
 
-        registrationService.processFileAndRegisterCar("test.csv");
-        assertThat(registrationService.processFileAndRegisterCar("test.csv"), CoreMatchers.is(asList(1L, 2L)));
+        assertThat(registrationService.processFileAndRegisterCar("src/test/resources/test.csv"), CoreMatchers.is(asList(1L, 2L)));
     }
 
     @Test(expected = CorruptedFileException.class)
     public void registration_emptyFile_throwsCorruptedFileException() throws Exception {
         Path path = Paths.get("empty.csv");
-        registrationService.processFileAndRegisterCar("empty.csv");
+        registrationService.processFileAndRegisterCar("src/test/resources/empty.csv");
     }
 
     @Test(expected = CorruptedFileException.class)
     public void registration_corruptedFile_throwsCorruptedFileException() throws Exception {
-        registrationService.processFileAndRegisterCar("corrupted.csv");
+        registrationService.processFileAndRegisterCar("src/test/resources/corrupted.csv");
     }
 
     @Test(expected = NotFoundException.class)
     public void registration_notFoundFile_throwsNotFoundException() throws Exception {
-        Path path = Paths.get("corrupted.csv");
         registrationService.processFileAndRegisterCar("bla.csv");
     }
 

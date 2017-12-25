@@ -1,4 +1,4 @@
-package com.playtika.qa.carsshop.service;
+package com.playtika.qa.carsshop.service.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

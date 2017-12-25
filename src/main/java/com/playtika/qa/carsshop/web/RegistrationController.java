@@ -1,14 +1,10 @@
 package com.playtika.qa.carsshop.web;
 
-import com.playtika.qa.carsshop.service.CorruptedFileException;
-import com.playtika.qa.carsshop.service.NotFoundException;
 import com.playtika.qa.carsshop.service.RegistrationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
 import java.util.List;
 
 @Slf4j

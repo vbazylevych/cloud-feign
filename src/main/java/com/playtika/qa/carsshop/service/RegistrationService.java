@@ -1,5 +1,7 @@
 package com.playtika.qa.carsshop.service;
 
+import com.playtika.qa.carsshop.service.exception.CorruptedFileException;
+import com.playtika.qa.carsshop.service.exception.NotFoundException;
 import com.playtika.qa.carsshop.service.external.CarServiceClientImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +12,6 @@ import com.playtika.qa.carsshop.domain.Car;
 
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
