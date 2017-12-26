@@ -1,7 +1,7 @@
 package com.playtika.qa.carsshop.service.external;
 
 import com.playtika.qa.carsshop.service.external.exception.BadRequestException;
-import com.playtika.qa.carsshop.service.external.exception.CarAlreadySallingException;
+import com.playtika.qa.carsshop.service.external.exception.CarAlreadyOnSaleException;
 import feign.FeignException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
@@ -13,8 +13,8 @@ public class CarServiceClientErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
         log.info("Process error response during request: {}", methodKey);
-        if (response.status() == 208) {
-            return new Car
+        if (response.status() == 302) {
+            return new CarAlreadyOnSaleException("Car already on sale!");
         }
 
         if (response.status() == 400) {

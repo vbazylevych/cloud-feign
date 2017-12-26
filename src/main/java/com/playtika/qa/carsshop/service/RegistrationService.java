@@ -1,7 +1,7 @@
 package com.playtika.qa.carsshop.service;
 
 import com.playtika.qa.carsshop.service.external.CarServiceClient;
-import com.playtika.qa.carsshop.service.external.exception.CarAlreadySallingException;
+import com.playtika.qa.carsshop.service.external.exception.CarAlreadyOnSaleException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class RegistrationService {
     private Optional<Long> register(CarInStope carInStope) {
         try {
             return of(carServiceClient.createCar(carInStope.getPrice(), carInStope.getContact(), carInStope.getCar()));
-        } catch (CarAlreadySallingException e) {
+        } catch (CarAlreadyOnSaleException e) {
             return empty();
         }
     }

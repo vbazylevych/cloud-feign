@@ -2,7 +2,7 @@ package com.playtika.qa.carsshop.service;
 
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.service.external.CarServiceClient;
-import com.playtika.qa.carsshop.service.external.exception.CarAlreadySallingException;
+import com.playtika.qa.carsshop.service.external.exception.CarAlreadyOnSaleException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -25,23 +25,21 @@ public class RegistrationServiceTest {
     RegistrationService registrationService;
     @Mock
     CarServiceClient carServiceClient;
+    Car firstCar = Car.builder()
+            .color("red")
+            .model("opel")
+            .plateNumber("xxx")
+            .year(2017)
+            .build();
+    Car secondCar = Car.builder()
+            .color("red2")
+            .model("opel2")
+            .plateNumber("xxx2")
+            .year(2018)
+            .build();
 
     @Test
     public void registration_multiLinesFile_successful() throws Exception {
-
-        Car firstCar = Car.builder()
-                .color("red")
-                .model("opel")
-                .plateNumber("xxx")
-                .year(2017)
-                .build();
-        Car secondCar = Car.builder()
-                .color("red2")
-                .model("opel2")
-                .plateNumber("xxx2")
-                .year(2018)
-                .build();
-
         when(carServiceClient.createCar(1000, "kot", firstCar)).thenReturn(1L);
         when(carServiceClient.createCar(1002, "kot2", secondCar)).thenReturn(2L);
 
@@ -50,22 +48,8 @@ public class RegistrationServiceTest {
 
     @Test
     public void registration_alreadyRegisteredCar_notInListOfId() throws Exception {
-
-        Car firstCar = Car.builder()
-                .color("red")
-                .model("opel")
-                .plateNumber("xxx")
-                .year(2017)
-                .build();
-        Car secondCar = Car.builder()
-                .color("red2")
-                .model("opel2")
-                .plateNumber("xxx2")
-                .year(2018)
-                .build();
-
         when(carServiceClient.createCar(1000, "kot", firstCar)).thenReturn(1L);
-        when(carServiceClient.createCar(1002, "kot2", secondCar)).thenThrow(CarAlreadySallingException.class);
+        when(carServiceClient.createCar(1002, "kot2", secondCar)).thenThrow(CarAlreadyOnSaleException.class);
 
         assertThat(registrationService.processFileAndRegisterCar("src/test/resources/test.csv"), is(asList(1L)));
         assertThat(registrationService.processFileAndRegisterCar("src/test/resources/test.csv").size(), is(1));
@@ -85,5 +69,4 @@ public class RegistrationServiceTest {
     public void registration_notFoundFile_throwsNotFoundException() throws Exception {
         registrationService.processFileAndRegisterCar("bla.csv");
     }
-
 }

@@ -4,7 +4,7 @@ package com.playtika.qa.carsshop.service.external;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.playtika.qa.carsshop.domain.Car;
 import com.playtika.qa.carsshop.service.external.exception.BadRequestException;
-import com.playtika.qa.carsshop.service.external.exception.CarAlreadySallingException;
+import com.playtika.qa.carsshop.service.external.exception.CarAlreadyOnSaleException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,17 +29,16 @@ public class CarServiceClientTest {
 
     @Rule
     public WireMockRule wm = new WireMockRule(options().port(8080));
+    Car car = Car.builder()
+            .color("red")
+            .model("opel")
+            .plateNumber("xxx")
+            .year(2010)
+            .build();
 
     @Test
     public void registration_successful() {
         String jsonCar = "{\"plateNumber\": \"xxx\", \"color\": \"red\", \"model\": \"opel\", \"year\": 2010 } ";
-        Car car = Car.builder()
-                .color("red")
-                .model("opel")
-                .plateNumber("xxx")
-                .year(2010)
-                .build();
-
         stubFor(post("/cars?price=2&contact=2")
                 .withHeader("Content-Type", equalTo("application/json"))
                 .withRequestBody(equalToJson(jsonCar))
@@ -47,30 +46,16 @@ public class CarServiceClientTest {
         assertThat(service.createCar(2, "2", car), is(1L));
     }
 
-    @Test(expected = CarAlreadySallingException.class)
-    public void registration_whenCarAlreadyExist_returnsNegativeId() {
-        Car car = Car.builder()
-                .color("red")
-                .model("opel")
-                .plateNumber("xxx")
-                .year(2010)
-                .build();
-
+    @Test(expected = CarAlreadyOnSaleException.class)
+    public void registration_whenCarAlreadyExist_returnsCorrectErrorCode() {
         stubFor(post("/cars?price=2&contact=2")
                 .withHeader("Content-Type", equalTo("application/json"))
-                .willReturn(aResponse().withStatus(400)));
+                .willReturn(aResponse().withStatus(302)));
         service.createCar(2, "2", car);
     }
 
     @Test(expected = BadRequestException.class)
-    public void badRequestStatusCode() {
-        Car car = Car.builder()
-                .color("red")
-                .model("opel")
-                .plateNumber("xxx")
-                .year(2010)
-                .build();
-
+    public void registration_withBadRequest_returnsCorrectErrorCode() {
         stubFor(post("/cars?price=2&contact=2")
                 .withHeader("Content-Type", equalTo("application/json"))
                 .willReturn(aResponse().withStatus(400)));
