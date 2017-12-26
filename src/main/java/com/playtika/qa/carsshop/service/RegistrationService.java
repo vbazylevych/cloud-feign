@@ -1,8 +1,7 @@
 package com.playtika.qa.carsshop.service;
 
-import com.playtika.qa.carsshop.service.exception.CorruptedFileException;
-import com.playtika.qa.carsshop.service.exception.NotFoundException;
-import com.playtika.qa.carsshop.service.external.CarServiceClientImpl;
+import com.playtika.qa.carsshop.service.external.CarServiceClient;
+import com.playtika.qa.carsshop.service.external.exception.CarAlreadySallingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,40 +9,41 @@ import com.playtika.qa.carsshop.domain.CarInStope;
 import com.playtika.qa.carsshop.domain.Car;
 
 
+import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.Optional.*;
+import static java.util.Optional.of;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 public class RegistrationService {
 
-    CarServiceClientImpl carServiceClient;
+    CarServiceClient carServiceClient;
 
     public List<Long> processFileAndRegisterCar(String url) throws Exception {
-        List listOfCarId = new ArrayList<>();
-        try {
-            Files.lines(Paths.get(url))
-                    .map(this::lineToCarInStore)
-                    .forEach(carInStope -> register(carInStope, listOfCarId));
-        } catch (NoSuchFileException e) {
-            throw new NotFoundException("File " + e.getMessage() + " not found");
-        } catch (java.lang.NumberFormatException e) {
-            throw new CorruptedFileException(e.getMessage());
-        } catch (IndexOutOfBoundsException e) {
-            throw new CorruptedFileException("Not all mandatory fields present in the file");
-        }
-        return listOfCarId;
+        List<CarInStope> listOfCarsInStore = processFile(url);
+        return listOfCarsInStore.stream().map(this::register).filter(id -> id.isPresent())
+                .map(id -> id.get()).collect(Collectors.toList());
     }
 
-    private void register(CarInStope carInStope, List listOfCarId) {
-        long carId = carServiceClient.createCar(carInStope.getPrice(), carInStope.getContact(), carInStope.getCar());
-        listOfCarId.add(carId);
+    private List<CarInStope> processFile(String url) throws IOException {
+        return Files.lines(Paths.get(url))
+                .map(this::lineToCarInStore).collect(Collectors.toList());
+    }
+
+    private Optional<Long> register(CarInStope carInStope) {
+        try {
+            return of(carServiceClient.createCar(carInStope.getPrice(), carInStope.getContact(), carInStope.getCar()));
+        } catch (CarAlreadySallingException e) {
+            return empty();
+        }
     }
 
     private CarInStope lineToCarInStore(String line) throws NumberFormatException {

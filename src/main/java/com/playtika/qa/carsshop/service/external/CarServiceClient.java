@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "CarService", url = "http://localhost:8080", configuration = CarServceFeignConfigurton.class)
+@FeignClient(name = "CarService", configuration = CarServceFeignConfigurton.class)
 public interface CarServiceClient {
 
     @PostMapping(value = "/cars", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -3,6 +3,8 @@ package com.playtika.qa.carsshop.service.external;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.playtika.qa.carsshop.domain.Car;
+import com.playtika.qa.carsshop.service.external.exception.BadRequestException;
+import com.playtika.qa.carsshop.service.external.exception.CarAlreadySallingException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,10 +22,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
-public class CarServiceClienImplTest {
+public class CarServiceClientTest {
 
     @Autowired
-    private CarServiceClientImpl service;
+    private CarServiceClient service;
 
     @Rule
     public WireMockRule wm = new WireMockRule(options().port(8080));
@@ -45,7 +47,7 @@ public class CarServiceClienImplTest {
         assertThat(service.createCar(2, "2", car), is(1L));
     }
 
-    @Test
+    @Test(expected = CarAlreadySallingException.class)
     public void registration_whenCarAlreadyExist_returnsNegativeId() {
         Car car = Car.builder()
                 .color("red")
@@ -56,9 +58,23 @@ public class CarServiceClienImplTest {
 
         stubFor(post("/cars?price=2&contact=2")
                 .withHeader("Content-Type", equalTo("application/json"))
-                .willReturn(aResponse().withStatus(500).withBody("Car already selling!")));
+                .willReturn(aResponse().withStatus(400)));
+        service.createCar(2, "2", car);
+    }
 
-        assertThat(service.createCar(2, "2", car), is(-1));
+    @Test(expected = BadRequestException.class)
+    public void badRequestStatusCode() {
+        Car car = Car.builder()
+                .color("red")
+                .model("opel")
+                .plateNumber("xxx")
+                .year(2010)
+                .build();
+
+        stubFor(post("/cars?price=2&contact=2")
+                .withHeader("Content-Type", equalTo("application/json"))
+                .willReturn(aResponse().withStatus(400)));
+        service.createCar(2, "2", car);
     }
 }
 
