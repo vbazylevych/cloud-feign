@@ -10,12 +10,14 @@ import org.mockito.Mock;
 
 import static org.hamcrest.CoreMatchers.*;
 
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.nio.file.NoSuchFileException;
 
 import static org.junit.Assert.*;
 import static java.util.Arrays.asList;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -40,16 +42,16 @@ public class RegistrationServiceImplTest {
 
     @Test
     public void registration_multiLinesFile_successful() throws Exception {
-        when(carServiceClient.createCar(1000, "kot", firstCar)).thenReturn(1L);
-        when(carServiceClient.createCar(1002, "kot2", secondCar)).thenReturn(2L);
+        when(carServiceClient.createCar(eq(1000), eq("kot"), refEq(firstCar))).thenReturn(1L);
+        when(carServiceClient.createCar(eq(1002), eq("kot2"), refEq(secondCar))).thenReturn(2L);
 
         assertThat(registrationServiceImpl.processFileAndRegisterCar("src/test/resources/test.csv"), is(asList(1L, 2L)));
     }
 
     @Test
     public void registration_alreadyRegisteredCar_notInListOfId() throws Exception {
-        when(carServiceClient.createCar(1000, "kot", firstCar)).thenReturn(1L);
-        when(carServiceClient.createCar(1002, "kot2", secondCar)).thenThrow(CarAlreadyOnSaleException.class);
+        when(carServiceClient.createCar(eq(1000), eq("kot"), refEq(firstCar))).thenReturn(1L);
+        when(carServiceClient.createCar(eq(1002), eq("kot2"), refEq(secondCar))).thenThrow(CarAlreadyOnSaleException.class);
 
         assertThat(registrationServiceImpl.processFileAndRegisterCar("src/test/resources/test.csv"), is(asList(1L)));
         assertThat(registrationServiceImpl.processFileAndRegisterCar("src/test/resources/test.csv").size(), is(1));
