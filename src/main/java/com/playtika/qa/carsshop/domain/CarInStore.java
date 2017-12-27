@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class CarInStope {
+public class CarInStore {
     private Car car;
     private int price;
     private String contact;

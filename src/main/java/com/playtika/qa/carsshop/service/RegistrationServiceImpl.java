@@ -5,7 +5,7 @@ import com.playtika.qa.carsshop.service.external.exception.CarAlreadyOnSaleExcep
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import com.playtika.qa.carsshop.domain.CarInStope;
+import com.playtika.qa.carsshop.domain.CarInStore;
 import com.playtika.qa.carsshop.domain.Car;
 
 
@@ -29,25 +29,25 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public List<Long> processFileAndRegisterCar(String url) throws Exception {
-        List<CarInStope> listOfCarsInStore = processFile(url);
+        List<CarInStore> listOfCarsInStore = processFile(url);
         return listOfCarsInStore.stream().map(this::register).filter(id -> id.isPresent())
                 .map(id -> id.get()).collect(Collectors.toList());
     }
 
-    private List<CarInStope> processFile(String url) throws IOException {
+    private List<CarInStore> processFile(String url) throws IOException {
         return Files.lines(Paths.get(url))
                 .map(this::lineToCarInStore).collect(Collectors.toList());
     }
 
-    private Optional<Long> register(CarInStope carInStope) {
+    private Optional<Long> register(CarInStore carInStore) {
         try {
-            return of(carServiceClient.createCar(carInStope.getPrice(), carInStope.getContact(), carInStope.getCar()));
+            return of(carServiceClient.createCar(carInStore.getPrice(), carInStore.getContact(), carInStore.getCar()));
         } catch (CarAlreadyOnSaleException e) {
             return empty();
         }
     }
 
-    private CarInStope lineToCarInStore(String line) throws NumberFormatException {
+    private CarInStore lineToCarInStore(String line) throws NumberFormatException {
         List<String> words = Stream.of(line.split(","))
                 .collect(Collectors.toList());
 
@@ -57,12 +57,12 @@ public class RegistrationServiceImpl implements RegistrationService {
                 .color(words.get(2))
                 .year(Integer.parseInt(words.get(3)))
                 .build();
-        CarInStope carInStope = CarInStope.builder()
+        CarInStore carInStore = CarInStore.builder()
                 .car(car)
                 .contact(words.get(4))
                 .price(Integer.parseInt(words.get(5)))
                 .build();
-        return carInStope;
+        return carInStore;
     }
 }
 
