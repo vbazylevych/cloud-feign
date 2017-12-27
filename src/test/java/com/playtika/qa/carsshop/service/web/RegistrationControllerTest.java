@@ -1,6 +1,6 @@
 package com.playtika.qa.carsshop.service.web;
 
-import com.playtika.qa.carsshop.service.RegistrationService;
+import com.playtika.qa.carsshop.service.RegistrationServiceImpl;
 import com.playtika.qa.carsshop.service.external.exception.BadRequestException;
 import com.playtika.qa.carsshop.web.RegistrationController;
 import feign.FeignException;
@@ -30,7 +30,7 @@ public class RegistrationControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private RegistrationService service;
+    private RegistrationServiceImpl service;
 
     @Test
     public void processFile_WithExistingFile_successful() throws Exception {
