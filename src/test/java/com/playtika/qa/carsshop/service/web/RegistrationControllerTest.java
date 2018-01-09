@@ -34,8 +34,9 @@ public class RegistrationControllerTest {
 
     @Test
     public void processFile_WithExistingFile_successful() throws Exception {
-        when(service.processFileAndRegisterCar("test.csv")).thenReturn(asList(1L));
-        mockMvc.perform(post("/?url=test.csv")
+        when(service.processFileAndRegisterCars("test.csv")).thenReturn(asList(1L));
+        mockMvc.perform(post("/file")
+                .content("test.csv")
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -44,8 +45,9 @@ public class RegistrationControllerTest {
 
     @Test
     public void processFile_emptyFile_returnNotAcceptableStatus() throws Exception {
-        when(service.processFileAndRegisterCar("test.csv")).thenThrow(NumberFormatException.class);
-        mockMvc.perform(post("/?url=test.csv")
+        when(service.processFileAndRegisterCars("test.csv")).thenThrow(NumberFormatException.class);
+        mockMvc.perform(post("/file")
+                .content("test.csv")
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(jsonPath("code").value(406));
@@ -53,8 +55,9 @@ public class RegistrationControllerTest {
 
     @Test
     public void processFile_corruptedFile_returnNotAcceptableStatus() throws Exception {
-        when(service.processFileAndRegisterCar("test.csv")).thenThrow(IndexOutOfBoundsException.class);
-        mockMvc.perform(post("/?url=test.csv")
+        when(service.processFileAndRegisterCars("test.csv")).thenThrow(IndexOutOfBoundsException.class);
+        mockMvc.perform(post("/file")
+                .content("test.csv")
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(jsonPath("code").value(406));
@@ -62,8 +65,9 @@ public class RegistrationControllerTest {
 
     @Test
     public void processFile_noFile_returnNotFoundStatus() throws Exception {
-        when(service.processFileAndRegisterCar("test.csv")).thenThrow(NoSuchFileException.class);
-        mockMvc.perform(post("/?url=test.csv")
+        when(service.processFileAndRegisterCars("test.csv")).thenThrow(NoSuchFileException.class);
+        mockMvc.perform(post("/file")
+                .content("test.csv")
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("code").value(404));
@@ -71,8 +75,9 @@ public class RegistrationControllerTest {
 
     @Test
     public void processFile_handle_BadRequestExceptionFromFeignClient() throws Exception {
-        when(service.processFileAndRegisterCar("test.csv")).thenThrow(BadRequestException.class);
-        mockMvc.perform(post("/?url=test.csv")
+        when(service.processFileAndRegisterCars("test.csv")).thenThrow(BadRequestException.class);
+        mockMvc.perform(post("/file")
+                .content("test.csv")
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("code").value(400));
@@ -81,8 +86,9 @@ public class RegistrationControllerTest {
 
     @Test
     public void processFile_handle_InternalErrort() throws Exception {
-        when(service.processFileAndRegisterCar("test.csv")).thenThrow(FeignException.class);
-        mockMvc.perform(post("/?url=test.csv")
+        when(service.processFileAndRegisterCars("test.csv")).thenThrow(FeignException.class);
+        mockMvc.perform(post("/file")
+                .content("test.csv")
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("code").value(500));

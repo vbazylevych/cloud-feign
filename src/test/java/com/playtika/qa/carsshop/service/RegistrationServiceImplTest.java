@@ -10,7 +10,6 @@ import org.mockito.Mock;
 
 import static org.hamcrest.CoreMatchers.*;
 
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.nio.file.NoSuchFileException;
@@ -45,7 +44,7 @@ public class RegistrationServiceImplTest {
         when(carServiceClient.createCar(eq(1000), eq("kot"), refEq(firstCar))).thenReturn(1L);
         when(carServiceClient.createCar(eq(1002), eq("kot2"), refEq(secondCar))).thenReturn(2L);
 
-        assertThat(registrationServiceImpl.processFileAndRegisterCar("src/test/resources/test.csv"), is(asList(1L, 2L)));
+        assertThat(registrationServiceImpl.processFileAndRegisterCars("src/test/resources/test.csv"), is(asList(1L, 2L)));
     }
 
     @Test
@@ -53,22 +52,22 @@ public class RegistrationServiceImplTest {
         when(carServiceClient.createCar(eq(1000), eq("kot"), refEq(firstCar))).thenReturn(1L);
         when(carServiceClient.createCar(eq(1002), eq("kot2"), refEq(secondCar))).thenThrow(CarAlreadyOnSaleException.class);
 
-        assertThat(registrationServiceImpl.processFileAndRegisterCar("src/test/resources/test.csv"), is(asList(1L)));
-        assertThat(registrationServiceImpl.processFileAndRegisterCar("src/test/resources/test.csv").size(), is(1));
+        assertThat(registrationServiceImpl.processFileAndRegisterCars("src/test/resources/test.csv"), is(asList(1L)));
+        assertThat(registrationServiceImpl.processFileAndRegisterCars("src/test/resources/test.csv").size(), is(1));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void registration_emptyFile_throwsCorruptedFileException() throws Exception {
-        registrationServiceImpl.processFileAndRegisterCar("src/test/resources/empty.csv");
+        registrationServiceImpl.processFileAndRegisterCars("src/test/resources/empty.csv");
     }
 
     @Test(expected = NumberFormatException.class)
     public void registration_corruptedFile_throwsCorruptedFileException() throws Exception {
-        registrationServiceImpl.processFileAndRegisterCar("src/test/resources/corrupted.csv");
+        registrationServiceImpl.processFileAndRegisterCars("src/test/resources/corrupted.csv");
     }
 
     @Test(expected = NoSuchFileException.class)
     public void registration_notFoundFile_throwsNotFoundException() throws Exception {
-        registrationServiceImpl.processFileAndRegisterCar("bla.csv");
+        registrationServiceImpl.processFileAndRegisterCars("bla.csv");
     }
 }

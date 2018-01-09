@@ -28,7 +28,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     CarServiceClient carServiceClient;
 
     @Override
-    public List<Long> processFileAndRegisterCar(String url) throws Exception {
+    public List<Long> processFileAndRegisterCars(String url) throws Exception {
         List<CarInStore> listOfCarsInStore = processFile(url);
         return listOfCarsInStore.stream().map(this::register).filter(id -> id.isPresent())
                 .map(id -> id.get()).collect(Collectors.toList());
