@@ -1,11 +1,15 @@
 package com.playtika.qa.carsshop.service.external;
 
-
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.playtika.qa.carsshop.domain.BestDealResponse;
 import com.playtika.qa.carsshop.domain.Car;
+import com.playtika.qa.carsshop.domain.User;
 import com.playtika.qa.carsshop.service.external.exception.BadRequestException;
+import com.playtika.qa.carsshop.service.external.exception.CantRejectAcceptedDeal;
 import com.playtika.qa.carsshop.service.external.exception.CarAlreadyOnSaleException;
+import com.playtika.qa.carsshop.service.external.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +21,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
 
 
 @RunWith(SpringRunner.class)
@@ -60,6 +65,66 @@ public class CarServiceClientTest {
                 .withHeader("Content-Type", equalTo("application/json"))
                 .willReturn(aResponse().withStatus(400)));
         service.createCar(2, "2", car);
+    }
+
+    @Test
+    public void openDeal_successful() {
+        String userString = "{\"name\": \"kot\", \"surname\": \"krot\", \"contact\": \"con1\"}";
+        User user = new User("kot", "krot", "con1");
+        stubFor(post("/deal?price=100500&adsId=1")
+                .withHeader("Content-Type", equalTo("application/json"))
+                .withRequestBody(equalToJson(userString))
+                .willReturn(ok("1")));
+        assertThat(service.createDeal(100500, 1, user), is(1L));
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void openDeal_NotFoundResponse() {
+        String userString = "{\"name\": \"kot\", \"surname\": \"krot\", \"contact\": \"con1\"}";
+        User user = new User("kot", "krot", "con1");
+        stubFor(post("/deal?price=100500&adsId=1")
+                .withHeader("Content-Type", equalTo("application/json"))
+                .withRequestBody(equalToJson(userString))
+                .willReturn(aResponse().withStatus(404)));
+        assertThat(service.createDeal(100500, 1, user), is(1L));
+    }
+
+    @Test
+    public void rejectDeal_successful() {
+        stubFor(post("/deal/reject/1")
+                .willReturn(ok()));
+        service.rejectDeal(1);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void rejectNotExisting_throwsException() {
+        stubFor(post("/deal/reject/1")
+                .willReturn(aResponse().withStatus(404)));
+        service.rejectDeal(1);
+    }
+
+    @Test(expected = CantRejectAcceptedDeal.class)
+    public void rejectAccepted_throwsException() {
+        stubFor(post("/deal/reject/1")
+                .willReturn(aResponse().withStatus(406)));
+        service.rejectDeal(1);
+    }
+
+    @Test
+    public void chooseBestDeal_successful() {
+
+        String stringBestDealResponse = "{\"user\":{\"name\":\"kot\",\"surname\":\"krot\",\"contact\":\"con1\"},\"price\":100500,\"id\":1}";
+        User user = new User("kot", "krot", "con1");
+        BestDealResponse expectedBestDealResponse = new BestDealResponse(user, 100500, 1);
+        stubFor(post("/deal/accept/1")
+                .willReturn(ok(stringBestDealResponse)));
+        BestDealResponse bestDealResponse = service.acceptBestDeal(1);
+
+        Assert.assertThat(bestDealResponse.getUser(), samePropertyValuesAs(expectedBestDealResponse.getUser()));
+        Assert.assertThat(bestDealResponse.getPrice(), is(100500));
+        Assert.assertThat(bestDealResponse.getId(), is(1L));
+
+
     }
 }
 

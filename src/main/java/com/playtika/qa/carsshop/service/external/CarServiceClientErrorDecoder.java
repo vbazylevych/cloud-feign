@@ -1,7 +1,9 @@
 package com.playtika.qa.carsshop.service.external;
 
 import com.playtika.qa.carsshop.service.external.exception.BadRequestException;
+import com.playtika.qa.carsshop.service.external.exception.CantRejectAcceptedDeal;
 import com.playtika.qa.carsshop.service.external.exception.CarAlreadyOnSaleException;
+import com.playtika.qa.carsshop.service.external.exception.NotFoundException;
 import feign.FeignException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
@@ -19,6 +21,14 @@ public class CarServiceClientErrorDecoder implements ErrorDecoder {
 
         if (response.status() == 400) {
             return new BadRequestException(response.body().toString());
+        }
+
+        if (response.status() == 406) {
+            return new CantRejectAcceptedDeal(response.body().toString());
+        }
+
+        if (response.status() == 404) {
+            return new NotFoundException(response.body().toString());
         }
         return createFeignException(methodKey, response);
     }
