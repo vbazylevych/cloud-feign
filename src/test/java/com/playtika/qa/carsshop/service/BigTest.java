@@ -45,13 +45,14 @@ public class BigTest {
         log.info("Car info returns correct info about loaded cars");
 
         Collection<CarInStore> allCars = carServiceClient.getAllCars();
-        Optional<CarInStore> firstAds = allCars.stream().filter(a -> a.getCar().getPlateNumber() == "xxx").findFirst();
-        Optional<CarInStore> secondAds = allCars.stream().filter(a -> a.getCar().getPlateNumber() == "xxx2").findFirst();
+        Optional<CarInStore> firstAds = allCars.stream().filter(a -> a.getCar().getPlateNumber().equals("xxx")).findFirst();
+        Optional<CarInStore> secondAds = allCars.stream().filter(a -> a.getCar().getPlateNumber().equals("xxx2")).findFirst();
         assertTrue(firstAds.isPresent());
         assertTrue(secondAds.isPresent());
         log.info("Loaded car present in AllCars response");
 
         carServiceClient.deleteCars(listOfAdsIds.get(1));
+        assertThat(carServiceClient.getAllCars().size(), is(1));
         log.info("Loaded car can be deleted");
 
         long adsId = listOfAdsIds.get(0);
@@ -63,6 +64,7 @@ public class BigTest {
         assertThat(bestDealResponse.getId(), is(dealId2));
         assertThat(bestDealResponse.getPrice(), is(100501
         ));
+        assertThat(carServiceClient.getAllCars().size(),is(0));
         log.info("Best deal was accepted successfully");
 
         carServiceClient.rejectDeal(dealId1);
