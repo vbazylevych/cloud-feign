@@ -166,7 +166,7 @@ public class CarServiceClientTest {
     @Test
     public void delete_successful() {
         String jsonCars = "[]";
-        stubFor(get("/cars")
+        stubFor(delete("/cars")
                 .willReturn(ok()));
         service.getAllCars().toArray();
         assertThat(service.getAllCars().size(), is(0));
