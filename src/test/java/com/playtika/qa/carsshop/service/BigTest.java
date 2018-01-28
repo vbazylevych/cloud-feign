@@ -45,8 +45,12 @@ public class BigTest {
         log.info("Car info returns correct info about loaded cars");
 
         Collection<CarInStore> allCars = carServiceClient.getAllCars();
-        Optional<CarInStore> firstAds = allCars.stream().filter(a -> a.getCar().getPlateNumber().equals("xxx")).findFirst();
-        Optional<CarInStore> secondAds = allCars.stream().filter(a -> a.getCar().getPlateNumber().equals("xxx2")).findFirst();
+        Optional<CarInStore> firstAds = allCars.stream()
+                .filter(a -> a.getCar().getPlateNumber().equals("xxx"))
+                .findFirst();
+        Optional<CarInStore> secondAds = allCars.stream()
+                .filter(a -> a.getCar().getPlateNumber().equals("xxx2"))
+                .findFirst();
         assertTrue(firstAds.isPresent());
         assertTrue(secondAds.isPresent());
         log.info("Loaded car present in AllCars response");
